@@ -1,0 +1,49 @@
+{
+  "recommendations": [
+    // ========================================
+    // C# and .NET Development (Essential)
+    // ========================================
+    "ms-dotnettools.csharp",
+    "ms-dotnettools.csdevkit",
+    "ms-dotnettools.vscode-dotnet-runtime",
+    "ms-dotnettools.test-explorer",
+
+    // ========================================
+    // Debugging and Development Tools
+    // ========================================
+    "ms-vscode.cpptools",
+    "ms-vscode.powershell",
+
+    // ========================================
+    // Version Control
+    // ========================================
+    "eamodio.gitlens",
+    "GitHub.vscode-pull-request-github",
+    "eamodio.gitmoji",
+
+    // ========================================
+    // Container and DevOps
+    // ========================================
+    "ms-azuretools.vscode-docker",
+    "ms-vscode-remote.remote-containers",
+    "ms-vscode-remote.remote-ssh",
+
+    // ========================================
+    // Code Quality and Analysis
+    // ========================================
+    "sonarsource.sonarlint-vscode",
+    "EditorConfig.EditorConfig",
+
+    // ========================================
+    // AI and Productivity
+    // ========================================
+    "GitHub.copilot",
+    "GitHub.copilot-chat",
+    "ms-vscode.remote-repositories",
+
+    // ========================================
+    // Code Formatting
+    // ========================================
+    "esbenp.prettier-vscode"
+  ]
+}

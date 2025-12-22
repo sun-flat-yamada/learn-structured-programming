@@ -1,0 +1,178 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    // ========================================
+    // Build Tasks
+    // ========================================
+    {
+      "label": "build",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
+        "${workspaceFolder}",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "problemMatcher": "$msCompile",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "build (release)",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
+        "${workspaceFolder}",
+        "--configuration",
+        "Release",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "problemMatcher": "$msCompile",
+      "group": "build"
+    },
+
+    // ========================================
+    // Clean Tasks
+    // ========================================
+    {
+      "label": "clean",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "clean",
+        "${workspaceFolder}",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "problemMatcher": "$msCompile"
+    },
+
+    // ========================================
+    // Test Tasks
+    // ========================================
+    {
+      "label": "test",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "test",
+        "${workspaceFolder}",
+        "--verbosity=normal",
+        "--logger=console;verbosity=normal"
+      ],
+      "problemMatcher": "$msCompile",
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "test (watch)",
+      "command": "dotnet",
+      "type": "process",
+      "args": ["watch", "test", "${workspaceFolder}", "--verbosity=normal"],
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": "$msCompile",
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^.*watch : Started",
+          "endsPattern": "^.*watch : Exited"
+        }
+      },
+      "group": "test"
+    },
+
+    // ========================================
+    // Run Tasks
+    // ========================================
+    {
+      "label": "run",
+      "command": "dotnet",
+      "type": "process",
+      "args": ["run", "--project", "${workspaceFolder}"],
+      "problemMatcher": "$msCompile",
+      "group": {
+        "kind": "test",
+        "isDefault": false
+      }
+    },
+    {
+      "label": "run (watch)",
+      "command": "dotnet",
+      "type": "process",
+      "args": ["watch", "run", "--project", "${workspaceFolder}"],
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": "$msCompile",
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^.*watch : Started",
+          "endsPattern": "^.*watch : Exited"
+        }
+      },
+      "group": "test"
+    },
+
+    // ========================================
+    // Restore and Tool Tasks
+    // ========================================
+    {
+      "label": "restore",
+      "command": "dotnet",
+      "type": "process",
+      "args": ["restore", "${workspaceFolder}"],
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "restore tools",
+      "command": "dotnet",
+      "type": "process",
+      "args": ["tool", "restore"],
+      "problemMatcher": "$msCompile"
+    },
+
+    // ========================================
+    // Analysis and Format Tasks
+    // ========================================
+    {
+      "label": "format",
+      "command": "dotnet",
+      "type": "process",
+      "args": ["format", "${workspaceFolder}", "--verbosity=diagnostic"],
+      "problemMatcher": "$msCompile",
+      "group": "build"
+    },
+    {
+      "label": "analyze (SonarLint)",
+      "command": "dotnet",
+      "type": "process",
+      "args": ["sonarscanner", "begin", "/k:learn-structured-programming"],
+      "problemMatcher": "$msCompile",
+      "group": "build"
+    },
+
+    // ========================================
+    // Publish Tasks
+    // ========================================
+    {
+      "label": "publish",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "publish",
+        "${workspaceFolder}",
+        "--configuration",
+        "Release",
+        "--output",
+        "${workspaceFolder}/publish"
+      ],
+      "problemMatcher": "$msCompile",
+      "group": "build"
+    }
+  ]
+}
