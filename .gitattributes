@@ -1,0 +1,120 @@
+# Auto detect text files and normalize line endings to LF
+* text=auto
+
+# C# and .NET Files
+*.cs text eol=lf
+*.csproj text eol=lf
+*.sln text eol=lf
+*.xaml text eol=lf
+*.xaml.cs text eol=lf
+*.resx text eol=lf
+*.props text eol=lf
+*.targets text eol=lf
+
+# Configuration Files
+*.json text eol=lf
+*.xml text eol=lf
+*.config text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.toml text eol=lf
+*.ini text eol=lf
+
+# Documentation
+*.md text eol=lf
+*.txt text eol=lf
+*.rst text eol=lf
+
+# Shell scripts
+*.sh text eol=lf
+*.bash text eol=lf
+
+# Windows batch/PowerShell scripts
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Git attributes
+.gitattributes text eol=lf
+.gitignore text eol=lf
+
+# Visual Studio project files
+*.vcxproj text eol=lf
+*.vcxproj.filters text eol=lf
+*.proj text eol=lf
+*.projitems text eol=lf
+*.resharper text eol=lf
+*.sln text eol=lf
+
+# Image files (Binary)
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.mov binary
+*.mp4 binary
+*.mp3 binary
+*.gz binary
+*.zip binary
+*.7z binary
+*.ttf binary
+*.otf binary
+*.fon binary
+
+# Archive files (Binary)
+*.zip binary
+*.7z binary
+*.gz binary
+*.bzip2 binary
+*.xz binary
+*.rar binary
+*.tar binary
+
+# Compiled files
+*.o binary
+*.so binary
+*.exe binary
+*.dll binary
+*.dylib binary
+*.lib binary
+*.a binary
+
+# NuGet
+*.nupkg binary
+*.snupkg binary
+
+# dotnet publish output
+publish/ export-ignore
+
+# Git LFS
+# Use Git LFS for large binary files
+*.pdb filter=lfs diff=lfs merge=lfs -text
+*.obj filter=lfs diff=lfs merge=lfs -text
+
+# Large media files
+*.mp4 filter=lfs diff=lfs merge=lfs -text
+*.mov filter=lfs diff=lfs merge=lfs -text
+*.mkv filter=lfs diff=lfs merge=lfs -text
+*.webm filter=lfs diff=lfs merge=lfs -text
+*.flv filter=lfs diff=lfs merge=lfs -text
+*.avi filter=lfs diff=lfs merge=lfs -text
+
+*.mp3 filter=lfs diff=lfs merge=lfs -text
+*.wav filter=lfs diff=lfs merge=lfs -text
+*.flac filter=lfs diff=lfs merge=lfs -text
+*.aac filter=lfs diff=lfs merge=lfs -text
+*.ogg filter=lfs diff=lfs merge=lfs -text
+*.wma filter=lfs diff=lfs merge=lfs -text
+
+# Archive files (use Git LFS for large archives)
+*.zip filter=lfs diff=lfs merge=lfs -text
+*.7z filter=lfs diff=lfs merge=lfs -text
+*.rar filter=lfs diff=lfs merge=lfs -text
+*.tar filter=lfs diff=lfs merge=lfs -text
+*.gz filter=lfs diff=lfs merge=lfs -text
+*.bzip2 filter=lfs diff=lfs merge=lfs -text
+
+# Binary build artifacts (large)
+bin/ export-ignore
+obj/ export-ignore
