@@ -1,0 +1,112 @@
+{
+  "name": "csharp-dev-env-for-lern-structured-programming",
+  "image": "mcr.microsoft.com/dotnet/sdk:8.0",
+
+  // === Features Configuration ===
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {
+      "version": "latest"
+    }
+  },
+
+  // === VS Code Customizations ===
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        // === C# and .NET Development ===
+        "ms-dotnettools.csharp",
+        "ms-dotnettools.csdevkit",
+        "ms-dotnettools.vscode-dotnet-runtime",
+        "ms-dotnettools.test-explorer",
+
+        // === Language and Debugging ===
+        "ms-vscode.cpptools",
+        "ms-vscode.powershell",
+
+        // === Version Control ===
+        "eamodio.gitlens",
+        "GitHub.vscode-pull-request-github",
+
+        // === Container and DevOps ===
+        "ms-azuretools.vscode-docker",
+
+        // === Code Quality and Formatting ===
+        "EditorConfig.EditorConfig",
+        "esbenp.prettier-vscode",
+        "sonarsource.sonarlint-vscode",
+
+        // === Productivity ===
+        "eamodio.gitmoji",
+        "ms-vscode.remote-repositories",
+        "GitHub.copilot",
+        "GitHub.copilot-chat"
+      ],
+      "settings": {
+        // === C# Analysis Settings ===
+        "omnisharp.enableRoslynAnalyzers": true,
+        "omnisharp.enableEditorConfigSupport": true,
+        "omnisharp.enableReferenceCodeLens": true,
+        "omnisharp.organizeImportsOnFormat": true,
+
+        // === Code Formatting ===
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "ms-dotnettools.csharp",
+        "[csharp]": {
+          "editor.defaultFormatter": "ms-dotnettools.csharp",
+          "editor.formatOnSave": true,
+          "editor.tabSize": 4,
+          "editor.insertSpaces": true
+        },
+
+        // === Testing ===
+        "dotnetCoreDebugLevel": "verbose",
+
+        // === Terminal ===
+        "terminal.integrated.defaultProfile.linux": "bash"
+      }
+    }
+  },
+
+  // === Workspace Mounts ===
+  "mounts": [
+    "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
+  ],
+
+  // === Initialization Commands ===
+  "postCreateCommand": "bash -c 'dotnet restore && dotnet tool restore'",
+  "postStartCommand": "dotnet build --no-restore 2>/dev/null || true",
+
+  // === Container Configuration ===
+  "remoteUser": "root",
+  "runArgs": ["--cpus=4", "--memory=4gb"],
+
+  // === Environment Variables ===
+  "remoteEnv": {
+    "DOTNET_CLI_TELEMETRY_OPTOUT": "true",
+    "DOTNET_SKIP_FIRST_TIME_EXPERIENCE": "true"
+  },
+
+  // === Forward Ports (for web development) ===
+  "forwardPorts": [5000, 5001, 8080, 8443],
+  "portsAttributes": {
+    "5000": {
+      "label": "HTTP",
+      "onAutoForward": "notify"
+    },
+    "5001": {
+      "label": "HTTPS",
+      "onAutoForward": "notify"
+    },
+    "8080": {
+      "label": "Application",
+      "onAutoForward": "notify"
+    },
+    "8443": {
+      "label": "Application HTTPS",
+      "onAutoForward": "notify"
+    }
+  }
+}
