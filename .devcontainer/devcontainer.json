@@ -1,10 +1,13 @@
 {
   "name": "csharp-dev-env-for-lern-structured-programming",
-  "image": "mcr.microsoft.com/dotnet/sdk:8.0",
+  "image": "mcr.microsoft.com/dotnet/sdk:9.0",
 
   // === Features Configuration ===
   "features": {
     "ghcr.io/devcontainers/features/git:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/git-lfs:1": {
       "version": "latest"
     },
     "ghcr.io/devcontainers/features/github-cli:1": {
@@ -29,9 +32,12 @@
         // === Version Control ===
         "eamodio.gitlens",
         "GitHub.vscode-pull-request-github",
+        "GitHub.remotehub",
+        "ms-vscode.azure-repos",
 
         // === Container and DevOps ===
         "ms-azuretools.vscode-docker",
+        "ms-azuretools.vscode-containers",
 
         // === Code Quality and Formatting ===
         "EditorConfig.EditorConfig",
@@ -76,7 +82,7 @@
   ],
 
   // === Initialization Commands ===
-  "postCreateCommand": "bash -c 'dotnet restore && dotnet tool restore'",
+  "postCreateCommand": "bash -c 'git config --global --add safe.directory /workspaces/learn-structured-programming && dotnet restore && dotnet tool restore'",
   "postStartCommand": "dotnet build --no-restore 2>/dev/null || true",
 
   // === Container Configuration ===
