@@ -1,5 +1,98 @@
 {
   // ========================================
+  // Workbench Appearance
+  // ========================================
+  "workbench.colorCustomizations": {
+    "window.activeBorder": "#b1f010A0",
+    "window.inactiveBorder": "#5c5cff",
+    "activityBar.border": "#b1f010A0",
+    "editorGroupHeader.tabsBorder": "#b1f010A0",
+    "titleBar.border": "#b1f010A0"
+  },
+  "workbench.editorLargeFileConfirmation": 256,
+
+  // ========================================
+  // Update Settings
+  // ========================================
+  "update.mode": "none",
+  "extensions.autoCheckUpdates": false,
+
+  // ========================================
+  // Remote Development Settings
+  // ========================================
+  "dev.containers.executeInWSL": true,
+  "remote.SSH.remotePlatform": {},
+
+  // ========================================
+  // Terminal Settings
+  // ========================================
+  "terminal.integrated.scrollback": 1000000,
+  "terminal.integrated.persistentSessionScrollback": 1000000,
+
+  // ========================================
+  // GitHub Copilot Settings
+  // ========================================
+  "github.copilot.chat.codesearch.enabled": true,
+  "github.copilot.nextEditSuggestions.enabled": true,
+  "github.copilot.chat.completionContext.typescript.mode": "sidecar",
+  "github.copilot.chat.editor.temporalContext.enabled": true,
+  "github.copilot.chat.edits.temporalContext.enabled": true,
+  "github.copilot.chat.generateTests.codeLens": true,
+  "github.copilot.chat.languageContext.typescript.enabled": true,
+  "github.copilot.chat.newWorkspaceCreation.enabled": true,
+  "github.copilot.chat.search.semanticTextResults": true,
+  "github.copilot.advanced": {},
+
+  // ========================================
+  // Chat Tools Terminal Auto-Approve
+  // ========================================
+  "chat.tools.terminal.autoApprove": {
+    "git config": true,
+    "git merge-base": true,
+    "git rev-parse": true,
+    "git rev-list": true,
+    "git remote get-url": true,
+    "New-Item": true,
+    "Out-Null": true,
+    "Out-File": true,
+    "Get-Item": true,
+    "Test-Path": true,
+    "Group-Object": true,
+    "ConvertTo-Json": true,
+    "whoami": true,
+    "cloc": true,
+    "chcp": true
+  },
+
+  // ========================================
+  // Chat Tools Server Sampling Settings
+  // ========================================
+  "chat.mcp.serverSampling": {
+    "GitKraken (bundled with GitLens): GitKraken": {
+      "enabled": false,
+      "allowedModels": []
+    }
+  },
+
+  // ========================================
+  // SonarLint Settings
+  // ========================================
+  "sonarlint.disableTelemetry": true,
+  "sonarlint.trace.server": "off",
+  "sonarlint.testFilePattern": "**/*.spec.*",
+
+  // ========================================
+  // Security Settings
+  // ========================================
+  "security.workspace.trust.untrustedFiles": "open",
+
+  // ========================================
+  // GitLens AI Settings
+  // ========================================
+  "gitlens.ai.model": "vscode",
+  "gitlens.ai.vscode.model": "copilot:gpt-4.1",
+
+  // ========================================
   // Editor Settings
   // ========================================
   "editor.defaultFormatter": "ms-dotnettools.csharp",
@@ -68,6 +161,7 @@
   // ========================================
   "git.ignoreLimitWarning": true,
   "git.autofetch": true,
+  "git.openRepositoryInParentFolders": "never",
   "gitlens.defaultDateFormat": "YYYY-MM-DD HH:mm:ss",
   "gitlens.defaultDateShortFormat": "MM/DD",
 
