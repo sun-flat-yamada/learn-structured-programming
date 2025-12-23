@@ -2,339 +2,143 @@
 
 ## 概要
 
-**オブジェクト指向設計に基づくカエルVSヘビゲーム**
+**オブジェクト指向設計のベストプラクティスを適用したカメVSワニゲーム（2D版）**
 
-このセクションは、Section03_StructuredProgrammingPlus の構造化プログラミング版を、オブジェクト指向設計のベストプラクティスを適用してリファクタリングしたバージョンです。
+このセクションは、Section03_StructuredProgrammingPlus のコードをオブジェクト指向設計の原則に基づいて完全に作り直したバージョンです。
 
-## 主な特徴
+## 適用したオブジェクト指向設計のベストプラクティス
 
-### 1. カプセル化（Encapsulation）
+### 1. SOLID原則
 
-各クラスが関連するデータと動作を一つにまとめ、内部の実装詳細を隠蔽します。
+#### 単一責任の原則 (SRP: Single Responsibility Principle)
+各クラスは単一の責任のみを持ちます：
+- `GameConfig`: ゲーム設定の管理
+- `GameState`: ゲーム状態の管理
+- `Turtle`/`Crocodile`: キャラクター固有のロジック
+- `ConsoleGameRenderer`: 画面描画
+- `ConsoleInputHandler`: 入力処理
 
-#### GameConfig クラス
-- ゲーム設定を不変オブジェクト（Immutable Object）として管理
-- コンストラクタでの値検証により、常に有効な状態を保証
-- ゲームルール全体の整合性を保証
+#### 開放/閉鎖原則 (OCP: Open/Closed Principle)
+- インターフェース（`IGameRenderer`, `IInputHandler`）により、既存コードを変更せずに拡張可能
+- 新しいレンダラーや入力ハンドラーの追加が容易
+
+#### リスコフの置換原則 (LSP: Liskov Substitution Principle)
+- `Turtle` と `Crocodile` は `Character` 基底クラスを継承
+- 派生クラスは基底クラスとして扱える
+
+#### インターフェース分離の原則 (ISP: Interface Segregation Principle)
+- `IGameRenderer` と `IInputHandler` は必要最小限のメソッドのみを定義
+- クライアントは使用しないメソッドに依存しない
+
+#### 依存性逆転の原則 (DIP: Dependency Inversion Principle)
+- `TurtleVsCrocodileGame` はインターフェースに依存
+- 具体実装への依存を排除
+
+### 2. デザインパターン
+
+#### Template Method パターン
+- `Character` 基底クラスで共通アルゴリズムを定義
+- 派生クラスで特定の処理をオーバーライド
+
+#### Strategy パターン
+- `IGameRenderer` と `IInputHandler` で異なる実装を交換可能
+
+#### Observer パターン
+- `GameState` のイベント（`StateChanged`, `GameEnded`, `GameInitialized`）で状態変更を通知
+
+#### Facade パターン
+- `TurtleVsCrocodileGame` がゲーム全体の複雑さを隠蔽
+
+### 3. 値オブジェクト (Value Object)
+- `Position` 構造体: イミュータブルで等価性に基づく比較を実装
+
+### 4. 依存性の注入 (Dependency Injection)
+- コンストラクタを通じて依存性を注入
+- テスタビリティと疎結合を実現
+
+### 5. イミュータブル設計
+- `GameConfig`: 作成後の変更不可
+- `Position`: 値オブジェクトとして不変
+
+## ファイル一覧
+
+| ファイル | 責任 |
+|---------|------|
+| `Position.cs` | 2D位置を表す値オブジェクト |
+| `GameConfig.cs` | ゲーム設定（イミュータブル） |
+| `Character.cs` | キャラクター基底クラスとカメ/ワニ派生クラス |
+| `GameState.cs` | ゲーム状態管理とイベント通知 |
+| `IGameRenderer.cs` | レンダリングインターフェース |
+| `IInputHandler.cs` | 入力処理インターフェース |
+| `ConsoleGameRenderer.cs` | コンソールレンダリング実装 |
+| `ConsoleInputHandler.cs` | コンソール入力処理実装 |
+| `FrogVsSnakeGame.cs` | メインゲームクラス（ファサード） |
+
+## クラス図
+
+```
+┌─────────────────┐
+│ TurtleVsCrocodile│
+│     Game        │ ←── ファサード
+└────────┬────────┘
+         │ 依存
+    ┌────┴────┬────────────┬────────────┐
+    ▼         ▼            ▼            ▼
+┌────────┐ ┌──────────┐ ┌───────────┐ ┌───────────┐
+│GameState│ │GameConfig│ │IGameRender│ │IInputHandl│
+│        │ │ (不変)   │ │    er     │ │    er     │
+└────┬───┘ └──────────┘ └─────┬─────┘ └─────┬─────┘
+     │                        │             │
+     │ 参照                   │ 実装        │ 実装
+     ▼                        ▼             ▼
+┌─────────┐            ┌───────────┐ ┌───────────┐
+│Character│            │Console    │ │Console    │
+│(abstract)│            │GameRender│ │InputHandlr│
+└────┬────┘            └───────────┘ └───────────┘
+     │ 継承
+  ┌──┴──┐
+  ▼     ▼
+┌────┐ ┌────────┐
+│Turtl│ │Crocodile│
+└────┘ └────────┘
+```
+
+## 使用方法
 
 ```csharp
-public class GameConfig
-{
-  public int GameWidth { get; }
-  public int GameHeight { get; }
-  public int InitialFrogPosition { get; }
-  // ... その他のプロパティ
-  
-  public bool IsWithinBounds(int position) { ... }
-}
-```
-
-#### Character クラスヒエラルキー
-- 抽象基底クラスで共通の位置管理機能を実装
-- Frog と Snake が特有の動作を実装
-
-```csharp
-public abstract class Character
-{
-  public int Position { get; set; }
-  public abstract string GetEmoji();
-  public abstract ConsoleColor GetColor();
-}
-
-public class Frog : Character { ... }
-public class Snake : Character { ... }
-```
-
-#### GameState クラス
-- ゲーム状態の一元管理
-- スコアや位置の直接操作を防止し、専用メソッドを通じた操作を強制
-
-```csharp
-public class GameState
-{
-  public int FrogPosition { get; set; }
-  public int SnakePosition { get; set; }
-  public int Score { get; private set; }
-  
-  public void IncrementScore() { ... }
-  public void End() { ... }
-}
-```
-
-### 2. 抽象化（Abstraction）
-
-インターフェースを使用して、実装の詳細から切り離された抽象層を提供します。
-
-#### IGameRenderer インターフェース
-```csharp
-public interface IGameRenderer
-{
-  void RenderGameScreen(GameState gameState);
-  void RenderGameOverScreen(int finalScore);
-  void SetupConsole();
-  void RestoreConsole();
-}
-```
-
-複数のレンダラー実装が可能：
-- ConsoleGameRenderer（コンソール描画）
-- WebGameRenderer（Web画面への出力）など
-
-#### IInputHandler インターフェース
-```csharp
-public interface IInputHandler
-{
-  bool ProcessInput(Frog frog);
-}
-```
-
-複数の入力ハンドラー実装が可能：
-- ConsoleInputHandler（コンソール入力）
-- NetworkInputHandler（ネットワーク経由の入力）など
-
-### 3. ポリモーフィズム（Polymorphism）
-
-インターフェースと継承を使用して、同じメソッド呼び出しで異なる動作を実現します。
-
-```csharp
-public class FrogVsSnakeGame
-{
-  private readonly IGameRenderer _renderer;
-  private readonly IInputHandler _inputHandler;
-
-  public FrogVsSnakeGame(
-    IGameRenderer? renderer = null,
-    IInputHandler? inputHandler = null)
-  {
-    _renderer = renderer ?? new ConsoleGameRenderer(...);
-    _inputHandler = inputHandler ?? new ConsoleInputHandler();
-  }
-
-  private void ExecuteGameTick()
-  {
-    // レンダラーの実装の詳細を知らずに使用可能
-    _renderer.RenderGameScreen(_gameState);
-    
-    // 入力ハンドラーの実装の詳細を知らずに使用可能
-    _inputHandler.ProcessInput(_frog);
-  }
-}
-```
-
-### 4. 単一責任の原則（Single Responsibility Principle）
-
-各クラスが単一の責任を持ち、その責任の理由だけで変更されます。
-
-| クラス | 責任 |
-|--------|------|
-| GameConfig | ゲーム設定管理と検証 |
-| GameState | ゲーム状態管理とイベント通知 |
-| Frog | カエルの位置管理と移動ロジック |
-| Snake | ヘビの位置管理と移動ロジック |
-| ConsoleGameRenderer | コンソール画面描画 |
-| ConsoleInputHandler | コンソール入力処理 |
-| FrogVsSnakeGame | ゲームループと各コンポーネントの統合 |
-
-### 5. 依存性の注入（Dependency Injection）
-
-コンストラクタを通じて依存性を注入することで、テストしやすく、疎結合な設計を実現します。
-
-```csharp
-public FrogVsSnakeGame(
-  GameConfig? config = null,
-  IGameRenderer? renderer = null,
-  IInputHandler? inputHandler = null)
-{
-  _config = config ?? new GameConfig();
-  _renderer = renderer ?? new ConsoleGameRenderer(_config, _frog, _snake);
-  _inputHandler = inputHandler ?? new ConsoleInputHandler();
-}
-```
-
-### 6. イベント駆動設計（Event-Driven Design）
-
-ゲーム状態の変更を購読可能なイベントとして提供します。
-
-```csharp
-public class GameState
-{
-  public event EventHandler<EventArgs>? StateChanged;
-  public event EventHandler<GameOverEventArgs>? GameEnded;
-
-  protected virtual void OnStateChanged()
-  {
-    StateChanged?.Invoke(this, EventArgs.Empty);
-  }
-
-  protected virtual void OnGameEnded()
-  {
-    GameEnded?.Invoke(this, new GameOverEventArgs(_score));
-  }
-}
-```
-
-## ファイル構成
-
-```
-Section04_ObjectOrientedProgramming/
-├── GameConfig.cs              # ゲーム設定管理（不変オブジェクト）
-├── GameState.cs               # ゲーム状態管理とイベント定義
-├── Character.cs               # キャラクター基底クラスと実装クラス
-│                              # (Frog, Snake)
-├── IGameRenderer.cs           # ゲーム描画インターフェース
-├── ConsoleGameRenderer.cs     # コンソール画面描画実装
-├── IInputHandler.cs           # 入力処理インターフェース
-├── ConsoleInputHandler.cs     # コンソール入力処理実装
-├── FrogVsSnakeGame.cs         # ゲームエンジンメインクラス
-└── README.md                  # このファイル
-```
-
-## 設計パターン
-
-### 1. Strategy パターン
-- `IGameRenderer` と `IInputHandler` がStrategy パターンの例
-- 異なるレンダリング戦略と入力処理戦略を切り替え可能
-
-### 2. Template Method パターン
-- `Character` 抽象クラスが基本的な動作をテンプレートとして定義
-
-### 3. Factory パターン
-- `FrogVsSnakeGame` コンストラクタでデフォルト実装を生成
-
-### 4. Observer パターン
-- `GameState` のイベント機構がObserver パターンの例
-- 状態変更を購読可能
-
-## Section02・03 との比較
-
-### 構造化プログラミング（Section02・03）
-```csharp
-// グローバル変数に直接アクセス
-GameState.FrogPosition = newPosition;
-GameState.Score++;
-
-// 静的メソッドを通じた操作
-CharacterMovement.MoveFrogRandomly();
-GameLogic.IsCollisionDetected();
-```
-
-### オブジェクト指向プログラミング（Section04）
-```csharp
-// オブジェクトのメソッドを通じた操作
-_frog.MoveRandomly();
-_frog.MoveByDirection(-1);
-_gameState.IncrementScore();
-
-// インターフェースを通じた依存性の抽象化
-_renderer.RenderGameScreen(_gameState);
-_inputHandler.ProcessInput(_frog);
-
-// イベント駆動
-_gameState.StateChanged += (sender, e) => { ... };
-_gameState.GameEnded += (sender, e) => { ... };
-```
-
-## 拡張のしやすさ
-
-オブジェクト指向設計により、以下のような拡張が容易になります：
-
-### 1. 新しいレンダラーの追加
-```csharp
-public class WebGameRenderer : IGameRenderer { ... }
-
-var game = new FrogVsSnakeGame(
-  renderer: new WebGameRenderer()
-);
-```
-
-### 2. 新しい入力ハンドラーの追加
-```csharp
-public class NetworkInputHandler : IInputHandler { ... }
-
-var game = new FrogVsSnakeGame(
-  inputHandler: new NetworkInputHandler()
-);
-```
-
-### 3. 新しいキャラクターの追加
-```csharp
-public class Bird : Character { ... }
-
-var bird = new Bird(_config, initialPosition);
-```
-
-### 4. ゲーム設定のカスタマイズ
-```csharp
-var customConfig = new GameConfig(
-  gameWidth: 50,
-  gameHeight: 15,
-  frogLeftMoveProbability: 25,
-  frogRightMoveProbability: 25
-);
-
-var game = new FrogVsSnakeGame(config: customConfig);
-```
-
-## テストの容易さ
-
-依存性の注入により、ユニットテストが簡単になります：
-
-```csharp
-// テスト用のダミーレンダラーとハンドラーを注入
-var mockRenderer = new MockGameRenderer();
-var mockInputHandler = new MockInputHandler();
-
-var game = new FrogVsSnakeGame(
-  renderer: mockRenderer,
-  inputHandler: mockInputHandler
-);
-
+// デフォルト設定でゲームを開始
+var game = new TurtleVsCrocodileGame();
 game.Run();
 
-// レンダラーやハンドラーの呼び出しを検証
-Assert.AreEqual(expectedCallCount, mockRenderer.RenderCallCount);
+// カスタム設定でゲームを開始
+var config = new GameConfig(
+    gameWidth: 40,
+    gameHeight: 20,
+    gameUpdateDelayMs: 150
+);
+var game = new TurtleVsCrocodileGame(config);
+game.Run();
+
+// テスト用にモックを注入
+var mockRenderer = new MockGameRenderer();
+var mockInputHandler = new MockInputHandler();
+var game = new TurtleVsCrocodileGame(
+    config: new GameConfig(),
+    renderer: mockRenderer,
+    inputHandler: mockInputHandler
+);
+game.Run();
 ```
 
-## オブジェクト指向設計のメリット
+## Section03からの主な変更点
 
-### 保守性の向上
-- 各クラスの責任が明確
-- コードの変更範囲が限定される
-- 関連するデータと動作が一箇所にまとまっている
-
-### 再利用性の向上
-- `Character` クラスの継承により、新しいキャラクターを簡単に追加可能
-- インターフェースの実装により、新しいレンダラーや入力ハンドラーを追加可能
-
-### テスト容易性
-- 依存性の注入により、モック/スタブの使用が容易
-- インターフェースにより、テスト対象の分離が簡単
-
-### スケーラビリティ
-- 新機能を既存コードへの影響を最小限に抑えて追加可能
-- クラスの分離により、チーム開発が効率的
-
-## ベストプラクティス
-
-このセクションで実装されたベストプラクティス：
-
-1. **不変オブジェクト（Immutable Objects）**: GameConfig
-2. **エラーハンドリング**: コンストラクタでの入力値検証
-3. **プロパティカプセル化**: 自動プロパティと get-only プロパティ
-4. **イベント駆動**: GameState の StateChanged, GameEnded イベント
-5. **インターフェース分離**: IGameRenderer, IInputHandler
-6. **スマートデフォルト**: 依存性の注入でのnull-coalescing オペレータ使用
-7. **抽象化の活用**: Character 基底クラスとポリモーフィズム
-8. **関心の分離**: 各クラスが単一の責任を持つ
-
-## 学習ポイント
-
-このセクションを通じて学べること：
-
-- **カプセル化**：データ隠蔽と制御
-- **抽象化**：インターフェースと基底クラスの活用
-- **ポリモーフィズム**：同じインターフェースで異なる実装
-- **依存性の注入**：テストしやすい疎結合な設計
-- **イベント駆動**：非同期的な状態通知
-- **SOLID原則**：特に単一責任と依存性逆転
-- **デザインパターン**：Strategy, Template Method, Factory, Observer
+| 観点 | Section03 (手続き型) | Section04 (OOP) |
+|------|---------------------|-----------------|
+| 状態管理 | 静的グローバル変数 | インスタンスフィールド |
+| 位置表現 | 個別のint変数 | Position値オブジェクト |
+| キャラクター | 静的メソッド | Character継承階層 |
+| 描画 | 静的メソッド | IGameRendererインターフェース |
+| 入力 | 静的メソッド | IInputHandlerインターフェース |
+| 設定 | 定数クラス | イミュータブルGameConfig |
+| テスト容易性 | 困難 | DIにより容易 |
+| 拡張性 | 困難 | インターフェースで容易 |

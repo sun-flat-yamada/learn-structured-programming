@@ -4,17 +4,25 @@ namespace LearnStructuredProgramming.Section04_ObjectOrientedProgramming
 {
   /// <summary>
   /// ゲームキャラクターの基底クラス
-  /// 位置管理と移動ロジックの共通部分をカプセル化する
+  ///
+  /// オブジェクト指向設計のベストプラクティス:
+  /// - Template Methodパターン: 共通の骨格をもつアルゴリズムを基底クラスで定義
+  /// - カプセル化: 位置情報と境界チェックを内部で管理
+  /// - 抽象化: GetEmoji/GetColor/GetDisplayNameを派生クラスで実装
+  /// - リスコフの置換原則: 派生クラスは基底クラスとして扱える
   /// </summary>
   public abstract class Character
   {
-    protected int _position;
+    protected Position _position;
     protected readonly GameConfig _config;
 
-    public int Position
+    /// <summary>
+    /// キャラクターの現在位置
+    /// </summary>
+    public Position Position
     {
       get => _position;
-      set
+      protected set
       {
         if (_config.IsWithinBounds(value))
         {
@@ -23,107 +31,132 @@ namespace LearnStructuredProgramming.Section04_ObjectOrientedProgramming
       }
     }
 
-    public string DisplayName { get; protected set; } = "";
+    /// <summary>
+    /// キャラクターの表示名
+    /// </summary>
+    public abstract string DisplayName { get; }
 
-    protected Character(GameConfig config, int initialPosition)
+    /// <summary>
+    /// キャラクターの絵文字表現
+    /// </summary>
+    public abstract string Emoji { get; }
+
+    /// <summary>
+    /// キャラクターの表示色
+    /// </summary>
+    public abstract ConsoleColor Color { get; }
+
+    protected Character(GameConfig config, Position initialPosition)
     {
       _config = config ?? throw new ArgumentNullException(nameof(config));
       _position = initialPosition;
     }
 
     /// <summary>
-    /// キャラクターの絵文字表現を取得する
+    /// 指定した方向に移動を試みる
     /// </summary>
-    public abstract string GetEmoji();
-
-    /// <summary>
-    /// キャラクターの表示色を取得する
-    /// </summary>
-    public abstract ConsoleColor GetColor();
-  }
-
-  /// <summary>
-  /// カエルクラス
-  /// ランダム移動とユーザー操作による移動の両方に対応
-  /// </summary>
-  public class Frog : Character
-  {
-    private readonly Random _random = new Random();
-
-    public Frog(GameConfig config, int initialPosition)
-      : base(config, initialPosition)
+    public virtual void TryMove(int deltaX, int deltaY)
     {
-      DisplayName = "カエル";
-    }
-
-    public override string GetEmoji() => "🐸";
-
-    public override ConsoleColor GetColor() => ConsoleColor.Green;
-
-    /// <summary>
-    /// ユーザー入力に基づいてカエルを移動させる
-    /// </summary>
-    public void MoveByDirection(int direction)
-    {
-      int newPosition = _position + direction;
+      Position newPosition = _position.Move(deltaX, deltaY);
       Position = newPosition;
     }
 
     /// <summary>
-    /// カエルをランダムに移動させる
-    /// 3段階確率分岐：左30%、右30%、移動なし40%
+    /// 別のキャラクターと衝突しているか判定
+    /// </summary>
+    public bool CollidesWith(Character other)
+    {
+      return _position.CollidesWith(other._position);
+    }
+  }
+
+  /// <summary>
+  /// カメクラス
+  /// プレイヤーが操作するキャラクター
+  ///
+  /// オブジェクト指向設計のベストプラクティス:
+  /// - 単一責任の原則: カメ固有の移動ロジックのみを担当
+  /// - 継承: Character基底クラスの機能を拡張
+  /// </summary>
+  public class Turtle : Character
+  {
+    private readonly Random _random = new();
+
+    public override string DisplayName => "カメ";
+    public override string Emoji => "🐢";
+    public override ConsoleColor Color => ConsoleColor.Green;
+
+    public Turtle(GameConfig config, Position initialPosition)
+      : base(config, initialPosition)
+    {
+    }
+
+    /// <summary>
+    /// カメをランダムに4方向のいずれかに移動させる
+    /// 確率: 上25%、下25%、左25%、右25%
     /// </summary>
     public void MoveRandomly()
     {
       int randomValue = _random.Next(100);
-      int newPosition;
-
-      if (randomValue < _config.FrogLeftMoveProbability)
+      Position newPosition = randomValue switch
       {
-        newPosition = _position - 1;
-      }
-      else if (randomValue < _config.FrogLeftMoveProbability + _config.FrogRightMoveProbability)
-      {
-        newPosition = _position + 1;
-      }
-      else
-      {
-        return;
-      }
+        < 25 => _position.MoveUp(),
+        < 50 => _position.MoveDown(),
+        < 75 => _position.MoveLeft(),
+        _ => _position.MoveRight()
+      };
 
       Position = newPosition;
     }
+
+    /// <summary>
+    /// 上方向に移動
+    /// </summary>
+    public void MoveUp() => TryMove(0, -1);
+
+    /// <summary>
+    /// 下方向に移動
+    /// </summary>
+    public void MoveDown() => TryMove(0, 1);
+
+    /// <summary>
+    /// 左方向に移動
+    /// </summary>
+    public void MoveLeft() => TryMove(-1, 0);
+
+    /// <summary>
+    /// 右方向に移動
+    /// </summary>
+    public void MoveRight() => TryMove(1, 0);
   }
 
   /// <summary>
-  /// ヘビクラス
-  /// カエルを追いかける自動移動ロジックを実装
+  /// ワニクラス
+  /// カメを追いかける敵キャラクター
+  ///
+  /// オブジェクト指向設計のベストプラクティス:
+  /// - 単一責任の原則: ワニ固有の追跡ロジックのみを担当
+  /// - 継承: Character基底クラスの機能を拡張
   /// </summary>
-  public class Snake : Character
+  public class Crocodile : Character
   {
-    public Snake(GameConfig config, int initialPosition)
+    public override string DisplayName => "ワニ";
+    public override string Emoji => "🐊";
+    public override ConsoleColor Color => ConsoleColor.Red;
+
+    public Crocodile(GameConfig config, Position initialPosition)
       : base(config, initialPosition)
     {
-      DisplayName = "ヘビ";
     }
 
-    public override string GetEmoji() => "🐍";
-
-    public override ConsoleColor GetColor() => ConsoleColor.Red;
-
     /// <summary>
-    /// カエルに向かってヘビを移動させる
+    /// カメに向かってワニを移動させる
+    /// X方向を優先し、同じX座標ならY方向に移動
     /// </summary>
-    public void MoveTowardsFrog(int frogPosition)
+    public void MoveTowards(Position targetPosition)
     {
-      if (_position < frogPosition)
-      {
-        Position = _position + 1;
-      }
-      else if (_position > frogPosition)
-      {
-        Position = _position - 1;
-      }
+      Position newPosition = _position.MoveTowards(targetPosition);
+      Position = newPosition;
     }
   }
 }
