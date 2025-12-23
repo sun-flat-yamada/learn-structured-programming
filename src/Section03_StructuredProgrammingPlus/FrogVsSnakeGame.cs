@@ -4,7 +4,7 @@ using System.Threading;
 namespace LearnStructuredProgramming.Section03_StructuredProgrammingPlus
 {
   /// <summary>
-  /// 構造化プログラミングのみを使用したカエルVSヘビゲーム（完全対応版）
+  /// 構造化プログラミングのみを使用したカメVSワニゲーム（完全対応版）
   ///
   /// 特徴：
   /// - グローバル変数を使用したゲーム状態管理
@@ -14,8 +14,8 @@ namespace LearnStructuredProgramming.Section03_StructuredProgrammingPlus
   /// - goto文を使わず、ループと条件分岐で制御
   ///
   /// 【改修内容】
-  /// - カエルの移動を行ごとにランダム化：3段階確率分岐（左30%、右30%、移動なし40%）
-  /// - 毎フレーム新しいランダム値を生成し、各行で独立した確率判定を実行
+  /// - 32x32のマス目内を縦横自由に移動可能
+  /// - カメはランダムに4方向（上下左右）に移動
   /// </summary>
   public class FrogVsSnakeGame
   {
@@ -23,8 +23,12 @@ namespace LearnStructuredProgramming.Section03_StructuredProgrammingPlus
     {
       SetupConsole();
 
-      // ゲーム状態を初期化
-      GameState.Initialize(GameRules.InitialFrogPosition, GameRules.InitialSnakePosition);
+      // ゲーム状態を初期化（2D座標）
+      GameState.Initialize(
+        GameRules.InitialTurtlePositionX,
+        GameRules.InitialTurtlePositionY,
+        GameRules.InitialCrocodilePositionX,
+        GameRules.InitialCrocodilePositionY);
 
       // メインゲームループ
       while (GameState.IsActive)
@@ -58,12 +62,12 @@ namespace LearnStructuredProgramming.Section03_StructuredProgrammingPlus
       }
 
       // ユーザー入力を処理
-      // 入力がない場合：CharacterMovement.MoveFrogRandomly()を呼び出す
-      // 毎フレーム新しいランダム判定が行われ、カエルが行ごとに異なる確率で移動する
+      // 入力がない場合：CharacterMovement.MoveTurtleRandomly()を呼び出す
+      // カメは縦横自由にランダム移動
       InputHandler.ProcessInput();
 
-      // ヘビを移動
-      CharacterMovement.MoveSnakeTowardsFrog();
+      // ワニを移動（縦横自由）
+      CharacterMovement.MoveCrocodileTowardsTurtle();
 
       // 衝突判定
       if (GameLogic.IsCollisionDetected())

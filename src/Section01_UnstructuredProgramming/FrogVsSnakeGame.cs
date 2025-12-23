@@ -10,20 +10,21 @@ namespace LearnStructuredProgramming.Section01_UnstructuredProgramming
   /// goto文を使用してプログラムフローを制御しています。
   ///
   /// ゲーム内容：
-  /// - カエルが左右に移動します
-  /// - ヘビがカエルを追いかけます
-  /// - ヘビがカエルに追いついたらゲームオーバーになります
+  /// - カメが左右に移動します
+  /// - ワニがカメを追いかけます
+  /// - ワニがカメに追いついたらゲームオーバーになります
+  /// - カメはワニが近づいてきたら反対方向に逃げます
   /// </summary>
   public class FrogVsSnakeGame
   {
     // ゲームパラメータ
-    private const int GameWidth = 40;
-    private const int GameHeight = 10;
-    private const int InitialFrogPosition = 20;
-    private const int InitialSnakePosition = 5;
+    private const int GameWidth = 32;
+    private const int GameHeight = 1;
+    private const int InitialTurtlePosition = 20;
+    private const int InitialCrocodilePosition = 5;
 
-    private int frogPosition;
-    private int snakePosition;
+    private int turtlePosition;
+    private int crocodilePosition;
     private int score;
     private bool gameActive;
     private Random random;
@@ -50,11 +51,11 @@ namespace LearnStructuredProgramming.Section01_UnstructuredProgramming
       // ユーザー入力処理
       ProcessInput();
 
-      // ヘビの移動
-      MoveSnake();
+      // ワニの移動
+      MoveCrocodile();
 
       // 衝突判定
-      if (frogPosition == snakePosition)
+      if (turtlePosition == crocodilePosition)
       {
         gameActive = false;
         goto GameOver;
@@ -79,8 +80,8 @@ namespace LearnStructuredProgramming.Section01_UnstructuredProgramming
 
     private void InitializeGame()
     {
-      frogPosition = InitialFrogPosition;
-      snakePosition = InitialSnakePosition;
+      turtlePosition = InitialTurtlePosition;
+      crocodilePosition = InitialCrocodilePosition;
       score = 0;
       gameActive = true;
       random = new Random();
@@ -90,7 +91,7 @@ namespace LearnStructuredProgramming.Section01_UnstructuredProgramming
     {
       Console.Clear();
       Console.WriteLine("╔════════════════════════════════════════╗");
-      Console.WriteLine("║      カエルVSヘビゲーム              ║");
+      Console.WriteLine("║      カメVSワニゲーム                ║");
       Console.WriteLine("╚════════════════════════════════════════╝");
       Console.WriteLine();
       Console.WriteLine($"スコア: {score} | 操作: [A]左 [D]右 [Q]終了");
@@ -101,9 +102,9 @@ namespace LearnStructuredProgramming.Section01_UnstructuredProgramming
 
       Console.WriteLine();
       Console.WriteLine("┌────────────────────────────────────────┐");
-      Console.WriteLine("│ カエル🐸: 左右矢印で移動              │");
-      Console.WriteLine("│ ヘビ🐍: カエルを追いかけます           │");
-      Console.WriteLine("│ ヘビに捕まったらゲームオーバー          │");
+      Console.WriteLine("│ カメ🐢: 左右矢印で移動                │");
+      Console.WriteLine("│ ワニ🐊: カメを追いかけます             │");
+      Console.WriteLine("│ ワニに捕まったらゲームオーバー          │");
       Console.WriteLine("└────────────────────────────────────────┘");
     }
 
@@ -117,24 +118,24 @@ namespace LearnStructuredProgramming.Section01_UnstructuredProgramming
       }
       Console.WriteLine("║");
 
-      // ゲーム領域
+      // ゲーム領域（1行目のみ）
       for (int y = 0; y < GameHeight; y++)
       {
         Console.Write("║");
 
         for (int x = 0; x < GameWidth; x++)
         {
-          if (x == snakePosition)
+          if (x == crocodilePosition)
           {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.Write("🐍");
+            Console.Write("🐊");
             Console.ResetColor();
             x++; // Unicodeキャラクタは幅が2なので、カウンタを進める
           }
-          else if (x == frogPosition)
+          else if (x == turtlePosition)
           {
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.Write("🐸");
+            Console.Write("🐢");
             Console.ResetColor();
             x++; // Unicodeキャラクタは幅が2なので、カウンタを進める
           }
@@ -146,9 +147,9 @@ namespace LearnStructuredProgramming.Section01_UnstructuredProgramming
 
         // 行の残り部分を埋める
         int filledWidth = 0;
-        if (snakePosition < GameWidth)
+        if (crocodilePosition < GameWidth)
           filledWidth += 2;
-        if (frogPosition < GameWidth)
+        if (turtlePosition < GameWidth)
           filledWidth += 2;
 
         for (int i = filledWidth; i < GameWidth; i++)
@@ -170,8 +171,8 @@ namespace LearnStructuredProgramming.Section01_UnstructuredProgramming
 
     private void ProcessInput()
     {
-      // カエルのデフォルト動作（ランダムに左右に移動）
-      MoveFrogRandomly();
+      // カメのデフォルト動作（ワニが近づいたら反対方向に逃げる）
+      MoveTurtleAwayFromCrocodile();
 
       // ユーザーのキー入力処理
       try
@@ -194,17 +195,17 @@ namespace LearnStructuredProgramming.Section01_UnstructuredProgramming
       {
         case ConsoleKey.A:
         case ConsoleKey.LeftArrow:
-          if (frogPosition > 0)
+          if (turtlePosition > 0)
           {
-            frogPosition--;
+            turtlePosition--;
           }
           break;
 
         case ConsoleKey.D:
         case ConsoleKey.RightArrow:
-          if (frogPosition < GameWidth - 2)
+          if (turtlePosition < GameWidth - 2)
           {
-            frogPosition++;
+            turtlePosition++;
           }
           break;
 
@@ -217,42 +218,45 @@ namespace LearnStructuredProgramming.Section01_UnstructuredProgramming
       }
     }
 
-    private void MoveFrogRandomly()
+    private void MoveTurtleAwayFromCrocodile()
     {
-      // 60%の確率でランダムに左右に移動
-      if (random.Next(100) < 60)
+      // ワニが近づいてきたら反対方向に逃げる
+      int distance = Math.Abs(turtlePosition - crocodilePosition);
+
+      // ワニが近くにいる場合（5マス以内）
+      if (distance <= 5)
       {
-        if (random.Next(2) == 0)
+        if (crocodilePosition < turtlePosition)
         {
-          // 左に移動
-          if (frogPosition > 0)
+          // ワニが左にいるので右に逃げる
+          if (turtlePosition < GameWidth - 2)
           {
-            frogPosition--;
+            turtlePosition++;
           }
         }
-        else
+        else if (crocodilePosition > turtlePosition)
         {
-          // 右に移動
-          if (frogPosition < GameWidth - 2)
+          // ワニが右にいるので左に逃げる
+          if (turtlePosition > 0)
           {
-            frogPosition++;
+            turtlePosition--;
           }
         }
       }
     }
 
-    private void MoveSnake()
+    private void MoveCrocodile()
     {
-      // ヘビの簡単なAI: カエルに向かって移動
-      if (snakePosition < frogPosition)
+      // ワニの簡単なAI: カメに向かって移動
+      if (crocodilePosition < turtlePosition)
       {
-        snakePosition++;
+        crocodilePosition++;
       }
-      else if (snakePosition > frogPosition)
+      else if (crocodilePosition > turtlePosition)
       {
-        snakePosition--;
+        crocodilePosition--;
       }
-      // snakePosition == frogPosition の場合は移動しない（衝突判定で処理）
+      // crocodilePosition == turtlePosition の場合は移動しない（衝突判定で処理）
     }
 
     private void DisplayGameOver()
@@ -263,7 +267,7 @@ namespace LearnStructuredProgramming.Section01_UnstructuredProgramming
       Console.WriteLine("╚════════════════════════════════════════╝");
       Console.WriteLine();
       Console.ForegroundColor = ConsoleColor.Red;
-      Console.WriteLine("ヘビがカエルを捕食しました！");
+      Console.WriteLine("ワニがカメを捕食しました！");
       Console.ResetColor();
       Console.WriteLine();
       Console.WriteLine($"最終スコア: {score}");

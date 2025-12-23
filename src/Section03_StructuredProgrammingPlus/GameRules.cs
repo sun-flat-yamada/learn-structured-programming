@@ -8,26 +8,36 @@ namespace LearnStructuredProgramming.Section03_StructuredProgrammingPlus
   public static class GameRules
   {
     // ゲームルール設定（グローバル定数）
-    public const int GameWidth = 40;
-    public const int GameHeight = 10;
-    public const int InitialFrogPosition = 20;
-    public const int InitialSnakePosition = 5;
+    public const int GameWidth = 32;
+    public const int GameHeight = 32;
+    public const int InitialTurtlePositionX = 20;
+    public const int InitialTurtlePositionY = 16;
+    public const int InitialCrocodilePositionX = 5;
+    public const int InitialCrocodilePositionY = 16;
     public const int GameUpdateDelayMs = 200;
 
     /// <summary>
-    /// 指定位置がゲーム領域内か判定する
+    /// 指定位置がゲーム領域内か判定する（X座標）
     /// </summary>
-    public static bool IsWithinBounds(int position)
+    public static bool IsWithinBoundsX(int position)
     {
       return position >= 0 && position < GameWidth - 2;
     }
 
     /// <summary>
+    /// 指定位置がゲーム領域内か判定する（Y座標）
+    /// </summary>
+    public static bool IsWithinBoundsY(int position)
+    {
+      return position >= 0 && position < GameHeight;
+    }
+
+    /// <summary>
     /// 衝突が発生しているか判定する
     /// </summary>
-    public static bool IsCollisionDetected(int frogPosition, int snakePosition)
+    public static bool IsCollisionDetected(int turtleX, int turtleY, int crocodileX, int crocodileY)
     {
-      return frogPosition == snakePosition;
+      return turtleX == crocodileX && turtleY == crocodileY;
     }
   }
 }
