@@ -8,10 +8,10 @@ namespace LearnStructuredProgramming.Section02_StructuredProgramming
   public static class GameRules
   {
     // ゲームルール設定（グローバル定数）
-    public const int GameWidth = 40;
-    public const int GameHeight = 10;
-    public const int InitialFrogPosition = 20;
-    public const int InitialSnakePosition = 5;
+    public const int GameWidth = 32;
+    public const int GameHeight = 1;
+    public const int InitialTurtlePosition = 20;
+    public const int InitialCrocodilePosition = 5;
     public const int GameUpdateDelayMs = 200;
 
     /// <summary>
@@ -25,9 +25,9 @@ namespace LearnStructuredProgramming.Section02_StructuredProgramming
     /// <summary>
     /// 衝突が発生しているか判定する
     /// </summary>
-    public static bool IsCollisionDetected(int frogPosition, int snakePosition)
+    public static bool IsCollisionDetected(int turtlePosition, int crocodilePosition)
     {
-      return frogPosition == snakePosition;
+      return turtlePosition == crocodilePosition;
     }
   }
 }

@@ -12,7 +12,7 @@ namespace LearnStructuredProgramming.Section02_StructuredProgramming
     /// </summary>
     public static bool IsCollisionDetected()
     {
-      return GameRules.IsCollisionDetected(GameState.FrogPosition, GameState.SnakePosition);
+      return GameRules.IsCollisionDetected(GameState.TurtlePosition, GameState.CrocodilePosition);
     }
   }
 }

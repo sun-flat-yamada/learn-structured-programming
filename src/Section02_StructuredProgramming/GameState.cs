@@ -8,18 +8,18 @@ namespace LearnStructuredProgramming.Section02_StructuredProgramming
   public static class GameState
   {
     // グローバル変数：ゲーム状態
-    public static int FrogPosition;
-    public static int SnakePosition;
+    public static int TurtlePosition;
+    public static int CrocodilePosition;
     public static int Score;
     public static bool IsActive;
 
     /// <summary>
     /// ゲーム状態を初期化する
     /// </summary>
-    public static void Initialize(int initialFrogPosition, int initialSnakePosition)
+    public static void Initialize(int initialTurtlePosition, int initialCrocodilePosition)
     {
-      FrogPosition = initialFrogPosition;
-      SnakePosition = initialSnakePosition;
+      TurtlePosition = initialTurtlePosition;
+      CrocodilePosition = initialCrocodilePosition;
       Score = 0;
       IsActive = true;
     }
@@ -27,10 +27,10 @@ namespace LearnStructuredProgramming.Section02_StructuredProgramming
     /// <summary>
     /// ゲーム状態をリセットする
     /// </summary>
-    public static void Reset(int initialFrogPosition, int initialSnakePosition)
+    public static void Reset(int initialTurtlePosition, int initialCrocodilePosition)
     {
-      FrogPosition = initialFrogPosition;
-      SnakePosition = initialSnakePosition;
+      TurtlePosition = initialTurtlePosition;
+      CrocodilePosition = initialCrocodilePosition;
       Score = 0;
       IsActive = true;
     }

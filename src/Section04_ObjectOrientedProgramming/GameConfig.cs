@@ -4,9 +4,13 @@ namespace LearnStructuredProgramming.Section04_ObjectOrientedProgramming
 {
   /// <summary>
   /// ゲーム設定を管理する不変クラス
-  /// ゲームルールおよび定数をカプセル化し、整合性を保証する
+  ///
+  /// オブジェクト指向設計のベストプラクティス:
+  /// - イミュータブル設計: プロパティはget-onlyで変更不可
+  /// - バリデーションの集中管理: コンストラクタで整合性を保証
+  /// - ビルダーパターンの代替: 名前付き引数でデフォルト値を提供
   /// </summary>
-  public class GameConfig
+  public sealed class GameConfig
   {
     /// <summary>
     /// ゲーム盤の幅
@@ -19,77 +23,118 @@ namespace LearnStructuredProgramming.Section04_ObjectOrientedProgramming
     public int GameHeight { get; }
 
     /// <summary>
-    /// カエルの初期位置
+    /// カメの初期X座標
     /// </summary>
-    public int InitialFrogPosition { get; }
+    public int InitialTurtlePositionX { get; }
 
     /// <summary>
-    /// ヘビの初期位置
+    /// カメの初期Y座標
     /// </summary>
-    public int InitialSnakePosition { get; }
+    public int InitialTurtlePositionY { get; }
+
+    /// <summary>
+    /// ワニの初期X座標
+    /// </summary>
+    public int InitialCrocodilePositionX { get; }
+
+    /// <summary>
+    /// ワニの初期Y座標
+    /// </summary>
+    public int InitialCrocodilePositionY { get; }
 
     /// <summary>
     /// ゲーム更新の遅延時間（ミリ秒）
     /// </summary>
     public int GameUpdateDelayMs { get; }
 
-    /// <summary>
-    /// カエルが左に移動する確率（パーセンテージ）
-    /// </summary>
-    public int FrogLeftMoveProbability { get; }
-
-    /// <summary>
-    /// カエルが右に移動する確率（パーセンテージ）
-    /// </summary>
-    public int FrogRightMoveProbability { get; }
-
     public GameConfig(
-      int gameWidth = 40,
-      int gameHeight = 10,
-      int initialFrogPosition = 20,
-      int initialSnakePosition = 5,
-      int gameUpdateDelayMs = 200,
-      int frogLeftMoveProbability = 30,
-      int frogRightMoveProbability = 30)
+      int gameWidth = 32,
+      int gameHeight = 32,
+      int initialTurtlePositionX = 20,
+      int initialTurtlePositionY = 16,
+      int initialCrocodilePositionX = 5,
+      int initialCrocodilePositionY = 16,
+      int gameUpdateDelayMs = 200)
     {
-      if (gameWidth <= 0 || gameHeight <= 0)
-        throw new ArgumentException("ゲーム盤のサイズは0より大きい値である必要があります");
-
-      if (gameUpdateDelayMs < 0)
-        throw new ArgumentException("ゲーム更新の遅延時間は0以上である必要があります");
-
-      if (frogLeftMoveProbability < 0 || frogLeftMoveProbability > 100)
-        throw new ArgumentException("移動確率は0～100の範囲である必要があります");
-
-      if (frogRightMoveProbability < 0 || frogRightMoveProbability > 100)
-        throw new ArgumentException("移動確率は0～100の範囲である必要があります");
-
-      if (frogLeftMoveProbability + frogRightMoveProbability > 100)
-        throw new ArgumentException("移動確率の合計が100を超えることはできません");
+      ValidatePositiveValue(gameWidth, nameof(gameWidth));
+      ValidatePositiveValue(gameHeight, nameof(gameHeight));
+      ValidateNonNegativeValue(gameUpdateDelayMs, nameof(gameUpdateDelayMs));
+      ValidatePositionInBounds(initialTurtlePositionX, gameWidth, "カメのX座標");
+      ValidatePositionInBounds(initialTurtlePositionY, gameHeight, "カメのY座標");
+      ValidatePositionInBounds(initialCrocodilePositionX, gameWidth, "ワニのX座標");
+      ValidatePositionInBounds(initialCrocodilePositionY, gameHeight, "ワニのY座標");
 
       GameWidth = gameWidth;
       GameHeight = gameHeight;
-      InitialFrogPosition = initialFrogPosition;
-      InitialSnakePosition = initialSnakePosition;
+      InitialTurtlePositionX = initialTurtlePositionX;
+      InitialTurtlePositionY = initialTurtlePositionY;
+      InitialCrocodilePositionX = initialCrocodilePositionX;
+      InitialCrocodilePositionY = initialCrocodilePositionY;
       GameUpdateDelayMs = gameUpdateDelayMs;
-      FrogLeftMoveProbability = frogLeftMoveProbability;
-      FrogRightMoveProbability = frogRightMoveProbability;
     }
 
     /// <summary>
     /// 指定位置がゲーム盤内か判定する
     /// </summary>
-    public bool IsWithinBounds(int position)
+    public bool IsWithinBounds(Position position)
     {
-      return position >= 0 && position < GameWidth - 2;
+      return IsWithinBoundsX(position.X) && IsWithinBoundsY(position.Y);
     }
 
     /// <summary>
-    /// 移動不可の確率を算出する
+    /// X座標がゲーム盤内か判定する
     /// </summary>
-    public int GetNoMoveProbability()
+    public bool IsWithinBoundsX(int x)
     {
-      return 100 - FrogLeftMoveProbability - FrogRightMoveProbability;
+      return x >= 0 && x < GameWidth - 2;
+    }
+
+    /// <summary>
+    /// Y座標がゲーム盤内か判定する
+    /// </summary>
+    public bool IsWithinBoundsY(int y)
+    {
+      return y >= 0 && y < GameHeight;
+    }
+
+    /// <summary>
+    /// カメの初期位置を取得
+    /// </summary>
+    public Position GetInitialTurtlePosition()
+    {
+      return new Position(InitialTurtlePositionX, InitialTurtlePositionY);
+    }
+
+    /// <summary>
+    /// ワニの初期位置を取得
+    /// </summary>
+    public Position GetInitialCrocodilePosition()
+    {
+      return new Position(InitialCrocodilePositionX, InitialCrocodilePositionY);
+    }
+
+    private static void ValidatePositiveValue(int value, string paramName)
+    {
+      if (value <= 0)
+      {
+        throw new ArgumentException($"{paramName}は0より大きい値である必要があります", paramName);
+      }
+    }
+
+    private static void ValidateNonNegativeValue(int value, string paramName)
+    {
+      if (value < 0)
+      {
+        throw new ArgumentException($"{paramName}は0以上である必要があります", paramName);
+      }
+    }
+
+    private static void ValidatePositionInBounds(int position, int max, string description)
+    {
+      if (position < 0 || position >= max)
+      {
+        throw new ArgumentOutOfRangeException(description, $"{description}は0から{max - 1}の範囲である必要があります");
+      }
     }
   }
 }

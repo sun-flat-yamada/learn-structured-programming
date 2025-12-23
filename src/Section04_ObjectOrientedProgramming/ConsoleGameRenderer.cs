@@ -4,28 +4,28 @@ namespace LearnStructuredProgramming.Section04_ObjectOrientedProgramming
 {
   /// <summary>
   /// コンソール画面へのゲームレンダリング実装
-  /// IGameRendererインターフェースを実装
+  ///
+  /// オブジェクト指向設計のベストプラクティス:
+  /// - 単一責任の原則: コンソールへの描画のみを担当
+  /// - インターフェース実装: IGameRendererを実装し交換可能性を提供
+  /// - コンポジション: GameConfigを依存性として受け取る
   /// </summary>
   public class ConsoleGameRenderer : IGameRenderer
   {
     private readonly GameConfig _config;
-    private readonly Frog _frog;
-    private readonly Snake _snake;
 
-    public ConsoleGameRenderer(GameConfig config, Frog frog, Snake snake)
+    public ConsoleGameRenderer(GameConfig config)
     {
       _config = config ?? throw new ArgumentNullException(nameof(config));
-      _frog = frog ?? throw new ArgumentNullException(nameof(frog));
-      _snake = snake ?? throw new ArgumentNullException(nameof(snake));
     }
 
-    public void SetupConsole()
+    public void SetupDisplay()
     {
       Console.Clear();
       Console.CursorVisible = false;
     }
 
-    public void RestoreConsole()
+    public void RestoreDisplay()
     {
       Console.CursorVisible = true;
     }
@@ -36,6 +36,7 @@ namespace LearnStructuredProgramming.Section04_ObjectOrientedProgramming
       RenderHeader();
       RenderGameBoard(gameState);
       RenderInstructions();
+      RenderScore(gameState);
     }
 
     public void RenderGameOverScreen(int finalScore)
@@ -46,7 +47,7 @@ namespace LearnStructuredProgramming.Section04_ObjectOrientedProgramming
       Console.WriteLine("╚════════════════════════════════════════╝");
       Console.WriteLine();
       Console.ForegroundColor = ConsoleColor.Red;
-      Console.WriteLine("ヘビがカエルを捕食しました！");
+      Console.WriteLine("ワニがカメを捕食しました！");
       Console.ResetColor();
       Console.WriteLine();
       Console.WriteLine($"最終スコア: {finalScore}");
@@ -58,7 +59,7 @@ namespace LearnStructuredProgramming.Section04_ObjectOrientedProgramming
     private void RenderHeader()
     {
       Console.WriteLine("╔════════════════════════════════════════╗");
-      Console.WriteLine("║      カエルVSヘビゲーム              ║");
+      Console.WriteLine("║      カメVSワニゲーム                ║");
       Console.WriteLine("╚════════════════════════════════════════╝");
       Console.WriteLine();
     }
@@ -69,7 +70,6 @@ namespace LearnStructuredProgramming.Section04_ObjectOrientedProgramming
       RenderGameArea(gameState);
       RenderBoardBottom();
       Console.WriteLine();
-      RenderScore(gameState);
     }
 
     private void RenderBoardTop()
@@ -97,44 +97,38 @@ namespace LearnStructuredProgramming.Section04_ObjectOrientedProgramming
       for (int y = 0; y < _config.GameHeight; y++)
       {
         Console.Write("║");
-        RenderGameRow(gameState);
+        RenderGameRow(y, gameState);
         Console.WriteLine("║");
       }
     }
 
-    private void RenderGameRow(GameState gameState)
+    private void RenderGameRow(int y, GameState gameState)
     {
+      Position turtlePos = gameState.TurtlePosition;
+      Position crocodilePos = gameState.CrocodilePosition;
+      Turtle turtle = gameState.Turtle;
+      Crocodile crocodile = gameState.Crocodile;
+
       for (int x = 0; x < _config.GameWidth; x++)
       {
-        if (x == _snake.Position)
+        if (x == crocodilePos.X && y == crocodilePos.Y)
         {
-          RenderCharacter(_snake.GetEmoji(), _snake.GetColor());
-          x++;
+          RenderCharacter(crocodile.Emoji, crocodile.Color);
+          x++; // Unicodeキャラクタは幅が2なので、カウンタを進める
         }
-        else if (x == _frog.Position)
+        else if (x == turtlePos.X && y == turtlePos.Y)
         {
-          RenderCharacter(_frog.GetEmoji(), _frog.GetColor());
-          x++;
+          RenderCharacter(turtle.Emoji, turtle.Color);
+          x++; // Unicodeキャラクタは幅が2なので、カウンタを進める
         }
         else
         {
           Console.Write(" ");
         }
       }
-
-      int filledWidth = 0;
-      if (_snake.Position < _config.GameWidth)
-        filledWidth += 2;
-      if (_frog.Position < _config.GameWidth)
-        filledWidth += 2;
-
-      for (int i = filledWidth; i < _config.GameWidth; i++)
-      {
-        Console.Write(" ");
-      }
     }
 
-    private void RenderCharacter(string emoji, ConsoleColor color)
+    private static void RenderCharacter(string emoji, ConsoleColor color)
     {
       Console.ForegroundColor = color;
       Console.Write(emoji);
@@ -148,14 +142,14 @@ namespace LearnStructuredProgramming.Section04_ObjectOrientedProgramming
       Console.ResetColor();
     }
 
-    private void RenderInstructions()
+    private static void RenderInstructions()
     {
-      Console.WriteLine("操作: [A]左 [D]右 [Q]終了");
+      Console.WriteLine("操作: [W]上 [S]下 [A]左 [D]右 [Q]終了");
       Console.WriteLine();
       Console.WriteLine("┌────────────────────────────────────────┐");
-      Console.WriteLine("│ カエル🐸: 左右キーで移動              │");
-      Console.WriteLine("│ ヘビ🐍: カエルを追いかけます           │");
-      Console.WriteLine("│ ヘビに捕まったらゲームオーバー          │");
+      Console.WriteLine("│ カメ🐢: 矢印キー/WASDで移動            │");
+      Console.WriteLine("│ ワニ🐊: カメを追いかけます             │");
+      Console.WriteLine("│ ワニに捕まったらゲームオーバー          │");
       Console.WriteLine("└────────────────────────────────────────┘");
     }
   }
