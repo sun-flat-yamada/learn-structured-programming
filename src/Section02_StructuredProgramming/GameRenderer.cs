@@ -29,7 +29,7 @@ namespace LearnStructuredProgramming.Section02_StructuredProgramming
       Console.WriteLine("╚════════════════════════════════════════╝");
       Console.WriteLine();
       Console.ForegroundColor = ConsoleColor.Red;
-      Console.WriteLine("ヘビがカエルを捕食しました！");
+      Console.WriteLine("ワニがカメを捕食しました！");
       Console.ResetColor();
       Console.WriteLine();
       Console.WriteLine($"最終スコア: {GameState.Score}");
@@ -41,7 +41,7 @@ namespace LearnStructuredProgramming.Section02_StructuredProgramming
     private static void RenderHeader()
     {
       Console.WriteLine("╔════════════════════════════════════════╗");
-      Console.WriteLine("║      カエルVSヘビゲーム              ║");
+      Console.WriteLine("║      カメVSワニゲーム                ║");
       Console.WriteLine("╚════════════════════════════════════════╝");
       Console.WriteLine();
     }
@@ -88,14 +88,14 @@ namespace LearnStructuredProgramming.Section02_StructuredProgramming
     {
       for (int x = 0; x < GameRules.GameWidth; x++)
       {
-        if (x == GameState.SnakePosition)
+        if (x == GameState.CrocodilePosition)
         {
-          RenderCharacter("🐍", ConsoleColor.Red);
+          RenderCharacter("🐊", ConsoleColor.Red);
           x++; // Unicodeキャラクタは幅が2なので、カウンタを進める
         }
-        else if (x == GameState.FrogPosition)
+        else if (x == GameState.TurtlePosition)
         {
-          RenderCharacter("🐸", ConsoleColor.Green);
+          RenderCharacter("🐢", ConsoleColor.Green);
           x++; // Unicodeキャラクタは幅が2なので、カウンタを進める
         }
         else
@@ -106,9 +106,9 @@ namespace LearnStructuredProgramming.Section02_StructuredProgramming
 
       // 行の残り部分を埋める
       int filledWidth = 0;
-      if (GameState.SnakePosition < GameRules.GameWidth)
+      if (GameState.CrocodilePosition < GameRules.GameWidth)
         filledWidth += 2;
-      if (GameState.FrogPosition < GameRules.GameWidth)
+      if (GameState.TurtlePosition < GameRules.GameWidth)
         filledWidth += 2;
 
       for (int i = filledWidth; i < GameRules.GameWidth; i++)
@@ -129,9 +129,9 @@ namespace LearnStructuredProgramming.Section02_StructuredProgramming
       Console.WriteLine("操作: [A]左 [D]右 [Q]終了");
       Console.WriteLine();
       Console.WriteLine("┌────────────────────────────────────────┐");
-      Console.WriteLine("│ カエル🐸: 左右矢印で移動              │");
-      Console.WriteLine("│ ヘビ🐍: カエルを追いかけます           │");
-      Console.WriteLine("│ ヘビに捕まったらゲームオーバー          │");
+      Console.WriteLine("│ カメ🐢: 左右矢印で移動                │");
+      Console.WriteLine("│ ワニ🐊: カメを追いかけます             │");
+      Console.WriteLine("│ ワニに捕まったらゲームオーバー          │");
       Console.WriteLine("└────────────────────────────────────────┘");
     }
   }

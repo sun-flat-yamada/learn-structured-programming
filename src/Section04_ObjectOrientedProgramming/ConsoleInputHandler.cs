@@ -4,20 +4,27 @@ namespace LearnStructuredProgramming.Section04_ObjectOrientedProgramming
 {
   /// <summary>
   /// コンソール入力のハンドリング実装
-  /// IInputHandlerインターフェースを実装
+  ///
+  /// オブジェクト指向設計のベストプラクティス:
+  /// - 単一責任の原則: コンソール入力処理のみを担当
+  /// - 開放/閉鎖原則: 新しいキーバインドの追加が容易
+  /// - ストラテジーパターン: IInputHandlerインターフェースを実装
   /// </summary>
   public class ConsoleInputHandler : IInputHandler
   {
-    public bool ProcessInput(Frog frog)
+    /// <summary>
+    /// ユーザー入力を処理し、カメを移動させる
+    /// </summary>
+    public InputResult ProcessInput(Turtle turtle)
     {
       if (!IsKeyAvailable())
       {
-        frog.MoveRandomly();
-        return true;
+        turtle.MoveRandomly();
+        return InputResult.Continue;
       }
 
       ConsoleKeyInfo keyInfo = Console.ReadKey(true);
-      return ProcessKeyInput(keyInfo, frog);
+      return ProcessKeyInput(keyInfo, turtle);
     }
 
     private static bool IsKeyAvailable()
@@ -28,37 +35,43 @@ namespace LearnStructuredProgramming.Section04_ObjectOrientedProgramming
       }
       catch (InvalidOperationException)
       {
+        // コンソール入力がリダイレクトされている環境では KeyAvailable は使用不可
         return false;
       }
     }
 
-    private static bool ProcessKeyInput(ConsoleKeyInfo keyInfo, Frog frog)
+    private static InputResult ProcessKeyInput(ConsoleKeyInfo keyInfo, Turtle turtle)
     {
-      return keyInfo.Key switch
+      switch (keyInfo.Key)
       {
-        ConsoleKey.A or ConsoleKey.LeftArrow => HandleLeftInput(frog),
-        ConsoleKey.D or ConsoleKey.RightArrow => HandleRightInput(frog),
-        ConsoleKey.Q => false,
-        _ => HandleRandomMovement(frog)
-      };
-    }
+        case ConsoleKey.W:
+        case ConsoleKey.UpArrow:
+          turtle.MoveUp();
+          return InputResult.Continue;
 
-    private static bool HandleLeftInput(Frog frog)
-    {
-      frog.MoveByDirection(-1);
-      return true;
-    }
+        case ConsoleKey.S:
+        case ConsoleKey.DownArrow:
+          turtle.MoveDown();
+          return InputResult.Continue;
 
-    private static bool HandleRightInput(Frog frog)
-    {
-      frog.MoveByDirection(1);
-      return true;
-    }
+        case ConsoleKey.A:
+        case ConsoleKey.LeftArrow:
+          turtle.MoveLeft();
+          return InputResult.Continue;
 
-    private static bool HandleRandomMovement(Frog frog)
-    {
-      frog.MoveRandomly();
-      return true;
+        case ConsoleKey.D:
+        case ConsoleKey.RightArrow:
+          turtle.MoveRight();
+          return InputResult.Continue;
+
+        case ConsoleKey.Q:
+          return InputResult.Quit;
+
+        default:
+          // 無効なキーは無視してランダム移動
+          turtle.MoveRandomly();
+          return InputResult.Continue;
+      }
     }
   }
 }

@@ -15,8 +15,8 @@ namespace LearnStructuredProgramming.Section03_StructuredProgrammingPlus
     {
       if (!IsKeyAvailable())
       {
-        // 入力がない場合は、カエルがランダムに移動
-        CharacterMovement.MoveFrogRandomly();
+        // 入力がない場合は、カメがランダムに移動
+        CharacterMovement.MoveTurtleRandomly();
         return true;
       }
 
@@ -47,6 +47,12 @@ namespace LearnStructuredProgramming.Section03_StructuredProgrammingPlus
         ConsoleKey.D or ConsoleKey.RightArrow =>
           HandleRightInput(),
 
+        ConsoleKey.W or ConsoleKey.UpArrow =>
+          HandleUpInput(),
+
+        ConsoleKey.S or ConsoleKey.DownArrow =>
+          HandleDownInput(),
+
         ConsoleKey.Q =>
           HandleQuitInput(),
 
@@ -58,13 +64,25 @@ namespace LearnStructuredProgramming.Section03_StructuredProgrammingPlus
 
     private static bool HandleLeftInput()
     {
-      CharacterMovement.MoveFrog(-1);
+      CharacterMovement.MoveTurtle(-1, 0);
       return true;
     }
 
     private static bool HandleRightInput()
     {
-      CharacterMovement.MoveFrog(1);
+      CharacterMovement.MoveTurtle(1, 0);
+      return true;
+    }
+
+    private static bool HandleUpInput()
+    {
+      CharacterMovement.MoveTurtle(0, -1);
+      return true;
+    }
+
+    private static bool HandleDownInput()
+    {
+      CharacterMovement.MoveTurtle(0, 1);
       return true;
     }
 
@@ -76,7 +94,7 @@ namespace LearnStructuredProgramming.Section03_StructuredProgrammingPlus
 
     private static bool HandleRandomMovement()
     {
-      CharacterMovement.MoveFrogRandomly();
+      CharacterMovement.MoveTurtleRandomly();
       return true;
     }
   }

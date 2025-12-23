@@ -4,52 +4,49 @@ namespace LearnStructuredProgramming.Section04_ObjectOrientedProgramming
 {
   /// <summary>
   /// ゲーム状態を管理するクラス
-  /// ゲームの状態変更を集中管理し、イベント通知機能を提供する
+  ///
+  /// オブジェクト指向設計のベストプラクティス:
+  /// - オブザーバーパターン: イベントによる状態変更通知
+  /// - カプセル化: 状態変更のロジックを内部で管理
+  /// - 単一責任の原則: ゲーム状態管理のみを担当
+  /// - 依存性の注入: GameConfigを外部から受け取る
   /// </summary>
   public class GameState
   {
+    private readonly GameConfig _config;
+    private readonly Turtle _turtle;
+    private readonly Crocodile _crocodile;
+    private int _score;
+    private bool _isActive;
+
     /// <summary>
     /// ゲーム状態が変更された時に発生するイベント
     /// </summary>
-    public event EventHandler<EventArgs>? StateChanged;
+    public event EventHandler<GameStateChangedEventArgs>? StateChanged;
 
     /// <summary>
     /// ゲームが終了した時に発生するイベント
     /// </summary>
     public event EventHandler<GameOverEventArgs>? GameEnded;
 
-    private int _frogPosition;
-    private int _snakePosition;
-    private int _score;
-    private bool _isActive;
-    private readonly GameConfig _config;
+    /// <summary>
+    /// ゲームが初期化された時に発生するイベント
+    /// </summary>
+    public event EventHandler<EventArgs>? GameInitialized;
 
-    public int FrogPosition
-    {
-      get => _frogPosition;
-      set
-      {
-        if (_frogPosition != value)
-        {
-          _frogPosition = value;
-          OnStateChanged();
-        }
-      }
-    }
+    /// <summary>
+    /// カメの現在位置
+    /// </summary>
+    public Position TurtlePosition => _turtle.Position;
 
-    public int SnakePosition
-    {
-      get => _snakePosition;
-      set
-      {
-        if (_snakePosition != value)
-        {
-          _snakePosition = value;
-          OnStateChanged();
-        }
-      }
-    }
+    /// <summary>
+    /// ワニの現在位置
+    /// </summary>
+    public Position CrocodilePosition => _crocodile.Position;
 
+    /// <summary>
+    /// 現在のスコア
+    /// </summary>
     public int Score
     {
       get => _score;
@@ -57,22 +54,44 @@ namespace LearnStructuredProgramming.Section04_ObjectOrientedProgramming
       {
         if (_score != value)
         {
+          int oldScore = _score;
           _score = value;
-          OnStateChanged();
+          OnStateChanged(GameStateChangeType.ScoreChanged, oldScore, value);
         }
       }
     }
 
+    /// <summary>
+    /// ゲームがアクティブかどうか
+    /// </summary>
     public bool IsActive
     {
       get => _isActive;
       private set => _isActive = value;
     }
 
-    public GameState(GameConfig config)
+    /// <summary>
+    /// ゲーム設定への参照
+    /// </summary>
+    public GameConfig Config => _config;
+
+    /// <summary>
+    /// カメへの参照
+    /// </summary>
+    public Turtle Turtle => _turtle;
+
+    /// <summary>
+    /// ワニへの参照
+    /// </summary>
+    public Crocodile Crocodile => _crocodile;
+
+    public GameState(GameConfig config, Turtle turtle, Crocodile crocodile)
     {
       _config = config ?? throw new ArgumentNullException(nameof(config));
-      Initialize();
+      _turtle = turtle ?? throw new ArgumentNullException(nameof(turtle));
+      _crocodile = crocodile ?? throw new ArgumentNullException(nameof(crocodile));
+      _score = 0;
+      _isActive = false;
     }
 
     /// <summary>
@@ -80,11 +99,9 @@ namespace LearnStructuredProgramming.Section04_ObjectOrientedProgramming
     /// </summary>
     public void Initialize()
     {
-      _frogPosition = _config.InitialFrogPosition;
-      _snakePosition = _config.InitialSnakePosition;
       _score = 0;
       _isActive = true;
-      OnStateChanged();
+      OnGameInitialized();
     }
 
     /// <summary>
@@ -109,17 +126,51 @@ namespace LearnStructuredProgramming.Section04_ObjectOrientedProgramming
     /// </summary>
     public bool IsCollisionDetected()
     {
-      return FrogPosition == SnakePosition;
+      return _turtle.CollidesWith(_crocodile);
     }
 
-    protected virtual void OnStateChanged()
+    protected virtual void OnStateChanged(GameStateChangeType changeType, object? oldValue = null, object? newValue = null)
     {
-      StateChanged?.Invoke(this, EventArgs.Empty);
+      StateChanged?.Invoke(this, new GameStateChangedEventArgs(changeType, oldValue, newValue));
     }
 
     protected virtual void OnGameEnded()
     {
       GameEnded?.Invoke(this, new GameOverEventArgs(_score));
+    }
+
+    protected virtual void OnGameInitialized()
+    {
+      GameInitialized?.Invoke(this, EventArgs.Empty);
+    }
+  }
+
+  /// <summary>
+  /// ゲーム状態変更の種類
+  /// </summary>
+  public enum GameStateChangeType
+  {
+    ScoreChanged,
+    TurtleMoved,
+    CrocodileMoved,
+    GameStarted,
+    GameEnded
+  }
+
+  /// <summary>
+  /// ゲーム状態変更イベントの引数
+  /// </summary>
+  public class GameStateChangedEventArgs : EventArgs
+  {
+    public GameStateChangeType ChangeType { get; }
+    public object? OldValue { get; }
+    public object? NewValue { get; }
+
+    public GameStateChangedEventArgs(GameStateChangeType changeType, object? oldValue = null, object? newValue = null)
+    {
+      ChangeType = changeType;
+      OldValue = oldValue;
+      NewValue = newValue;
     }
   }
 

@@ -7,82 +7,100 @@ namespace LearnStructuredProgramming.Section03_StructuredProgrammingPlus
   /// </summary>
   /// <remarks>
   /// 【Section03_StructuredProgrammingPlus について】
-  /// このセクションは、Section02 のコメント内の「パターン2」を完全実装したバージョンです。
+  /// このセクションは、32x32のマス目内を縦横自由に動くバージョンです。
   ///
-  /// 【改修内容】カエルを行ごとにランダム化する完全対応版
+  /// 【改修内容】カメを縦横自由にランダム移動させる
   ///
-  /// - 移動確率の3段階分岐：30%左移動、30%右移動、40%移動なし
+  /// - 移動方向の4方向分岐：上、下、左、右
   /// - 毎フレーム（各行描画のたびに）新しいランダム値を生成
-  /// - 各行で独立した確率判定により、異なるランダムなパターンが実現される
   /// </remarks>
   public static class CharacterMovement
   {
     private static Random _random = new Random();
 
     /// <summary>
-    /// カエルをランダムに移動させる（ユーザー入力がない場合のデフォルト動作）
-    /// 完全対応版：3段階確率分岐（左30%、右30%、移動なし40%）
+    /// カメをランダムに移動させる（ユーザー入力がない場合のデフォルト動作）
+    /// 縦横自由に移動可能
     /// </summary>
-    public static void MoveFrogRandomly()
+    public static void MoveTurtleRandomly()
     {
       // 毎フレームで新しいランダム値を生成
-      // これにより、各行の描画時にカエルの移動パターンが異なるようになる
       int randomValue = _random.Next(100);
 
-      // 3段階の確率分岐：
-      // - 0～29: 左に移動（30%の確率）
-      // - 30～59: 右に移動（30%の確率）
-      // - 60～99: 移動なし（40%の確率）
+      // 4方向の確率分岐：
+      // - 0～24: 上に移動（25%の確率）
+      // - 25～49: 下に移動（25%の確率）
+      // - 50～74: 左に移動（25%の確率）
+      // - 75～99: 右に移動（25%の確率）
 
-      int newPosition;
+      int newX = GameState.TurtlePositionX;
+      int newY = GameState.TurtlePositionY;
 
-      if (randomValue < 30)
+      if (randomValue < 25)
+      {
+        // 上方向に1マス移動
+        newY = GameState.TurtlePositionY - 1;
+      }
+      else if (randomValue < 50)
+      {
+        // 下方向に1マス移動
+        newY = GameState.TurtlePositionY + 1;
+      }
+      else if (randomValue < 75)
       {
         // 左方向に1マス移動
-        newPosition = GameState.FrogPosition - 1;
-      }
-      else if (randomValue < 60)
-      {
-        // 右方向に1マス移動
-        newPosition = GameState.FrogPosition + 1;
+        newX = GameState.TurtlePositionX - 1;
       }
       else
       {
-        // 移動なし
-        return;
+        // 右方向に1マス移動
+        newX = GameState.TurtlePositionX + 1;
       }
 
       // 移動後の位置がゲーム領域内であることを確認
-      if (GameRules.IsWithinBounds(newPosition))
+      if (GameRules.IsWithinBoundsX(newX) && GameRules.IsWithinBoundsY(newY))
       {
-        GameState.FrogPosition = newPosition;
+        GameState.TurtlePositionX = newX;
+        GameState.TurtlePositionY = newY;
       }
     }
 
     /// <summary>
-    /// ヘビをカエルに向かって移動させる
+    /// ワニをカメに向かって移動させる（縦横自由）
     /// </summary>
-    public static void MoveSnakeTowardsFrog()
+    public static void MoveCrocodileTowardsTurtle()
     {
-      if (GameState.SnakePosition < GameState.FrogPosition)
+      // X方向の移動
+      if (GameState.CrocodilePositionX < GameState.TurtlePositionX)
       {
-        GameState.SnakePosition++;
+        GameState.CrocodilePositionX++;
       }
-      else if (GameState.SnakePosition > GameState.FrogPosition)
+      else if (GameState.CrocodilePositionX > GameState.TurtlePositionX)
       {
-        GameState.SnakePosition--;
+        GameState.CrocodilePositionX--;
+      }
+      // Y方向の移動
+      else if (GameState.CrocodilePositionY < GameState.TurtlePositionY)
+      {
+        GameState.CrocodilePositionY++;
+      }
+      else if (GameState.CrocodilePositionY > GameState.TurtlePositionY)
+      {
+        GameState.CrocodilePositionY--;
       }
     }
 
     /// <summary>
-    /// カエルをユーザー入力に基づいて移動させる
+    /// カメをユーザー入力に基づいて移動させる（縦横対応）
     /// </summary>
-    public static void MoveFrog(int direction)
+    public static void MoveTurtle(int directionX, int directionY)
     {
-      int newPosition = GameState.FrogPosition + direction;
-      if (GameRules.IsWithinBounds(newPosition))
+      int newX = GameState.TurtlePositionX + directionX;
+      int newY = GameState.TurtlePositionY + directionY;
+      if (GameRules.IsWithinBoundsX(newX) && GameRules.IsWithinBoundsY(newY))
       {
-        GameState.FrogPosition = newPosition;
+        GameState.TurtlePositionX = newX;
+        GameState.TurtlePositionY = newY;
       }
     }
   }

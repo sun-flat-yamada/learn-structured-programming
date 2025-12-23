@@ -7,19 +7,23 @@ namespace LearnStructuredProgramming.Section03_StructuredProgrammingPlus
   /// </summary>
   public static class GameState
   {
-    // グローバル変数：ゲーム状態
-    public static int FrogPosition;
-    public static int SnakePosition;
+    // グローバル変数：ゲーム状態（2D座標対応）
+    public static int TurtlePositionX;
+    public static int TurtlePositionY;
+    public static int CrocodilePositionX;
+    public static int CrocodilePositionY;
     public static int Score;
     public static bool IsActive;
 
     /// <summary>
     /// ゲーム状態を初期化する
     /// </summary>
-    public static void Initialize(int initialFrogPosition, int initialSnakePosition)
+    public static void Initialize(int initialTurtleX, int initialTurtleY, int initialCrocodileX, int initialCrocodileY)
     {
-      FrogPosition = initialFrogPosition;
-      SnakePosition = initialSnakePosition;
+      TurtlePositionX = initialTurtleX;
+      TurtlePositionY = initialTurtleY;
+      CrocodilePositionX = initialCrocodileX;
+      CrocodilePositionY = initialCrocodileY;
       Score = 0;
       IsActive = true;
     }
@@ -27,10 +31,12 @@ namespace LearnStructuredProgramming.Section03_StructuredProgrammingPlus
     /// <summary>
     /// ゲーム状態をリセットする
     /// </summary>
-    public static void Reset(int initialFrogPosition, int initialSnakePosition)
+    public static void Reset(int initialTurtleX, int initialTurtleY, int initialCrocodileX, int initialCrocodileY)
     {
-      FrogPosition = initialFrogPosition;
-      SnakePosition = initialSnakePosition;
+      TurtlePositionX = initialTurtleX;
+      TurtlePositionY = initialTurtleY;
+      CrocodilePositionX = initialCrocodileX;
+      CrocodilePositionY = initialCrocodileY;
       Score = 0;
       IsActive = true;
     }
