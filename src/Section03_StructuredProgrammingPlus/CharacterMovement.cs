@@ -3,61 +3,49 @@ using System;
 namespace LearnStructuredProgramming.Section03_StructuredProgrammingPlus
 {
   /// <summary>
-  /// 構造化プログラミング用のキャラクター移動処理関数（完全対応版）
+  /// キャラクター移動ロジックを提供する静的クラス（2D対応）
+  ///
+  /// ■ 責務
+  /// カメとワニの2D移動処理を担当します。
+  ///
+  /// ■ 移動パターン
+  /// - カメ: 上下左右ランダム移動（25%ずつ）
+  /// - ワニ: X軸優先で2D追跡
   /// </summary>
-  /// <remarks>
-  /// 【Section03_StructuredProgrammingPlus について】
-  /// このセクションは、32x32のマス目内を縦横自由に動くバージョンです。
-  ///
-  /// 【改修内容】カメを縦横自由にランダム移動させる
-  ///
-  /// - 移動方向の4方向分岐：上、下、左、右
-  /// - 毎フレーム（各行描画のたびに）新しいランダム値を生成
-  /// </remarks>
   public static class CharacterMovement
   {
     private static Random _random = new Random();
 
     /// <summary>
-    /// カメをランダムに移動させる（ユーザー入力がない場合のデフォルト動作）
-    /// 縦横自由に移動可能
+    /// カメを4方向にランダム移動（入力がない場合）
     /// </summary>
     public static void MoveTurtleRandomly()
     {
-      // 毎フレームで新しいランダム値を生成
+      // 毎フレーム新しいランダム値を生成
       int randomValue = _random.Next(100);
 
-      // 4方向の確率分岐：
-      // - 0～24: 上に移動（25%の確率）
-      // - 25～49: 下に移動（25%の確率）
-      // - 50～74: 左に移動（25%の確率）
-      // - 75～99: 右に移動（25%の確率）
-
+      // 4方向に25%ずつの確率で移動
       int newX = GameState.TurtlePositionX;
       int newY = GameState.TurtlePositionY;
 
       if (randomValue < 25)
       {
-        // 上方向に1マス移動
-        newY = GameState.TurtlePositionY - 1;
+        newY = GameState.TurtlePositionY - 1;  // 上
       }
       else if (randomValue < 50)
       {
-        // 下方向に1マス移動
-        newY = GameState.TurtlePositionY + 1;
+        newY = GameState.TurtlePositionY + 1;  // 下
       }
       else if (randomValue < 75)
       {
-        // 左方向に1マス移動
-        newX = GameState.TurtlePositionX - 1;
+        newX = GameState.TurtlePositionX - 1;  // 左
       }
       else
       {
-        // 右方向に1マス移動
-        newX = GameState.TurtlePositionX + 1;
+        newX = GameState.TurtlePositionX + 1;  // 右
       }
 
-      // 移動後の位置がゲーム領域内であることを確認
+      // 境界チェック後に移動
       if (GameRules.IsWithinBoundsX(newX) && GameRules.IsWithinBoundsY(newY))
       {
         GameState.TurtlePositionX = newX;
@@ -66,11 +54,11 @@ namespace LearnStructuredProgramming.Section03_StructuredProgrammingPlus
     }
 
     /// <summary>
-    /// ワニをカメに向かって移動させる（縦横自由）
+    /// ワニをカメに向かって2D追跡（X軸優先）
     /// </summary>
     public static void MoveCrocodileTowardsTurtle()
     {
-      // X方向の移動
+      // X軸の差を先に詰める
       if (GameState.CrocodilePositionX < GameState.TurtlePositionX)
       {
         GameState.CrocodilePositionX++;
@@ -79,7 +67,7 @@ namespace LearnStructuredProgramming.Section03_StructuredProgrammingPlus
       {
         GameState.CrocodilePositionX--;
       }
-      // Y方向の移動
+      // Xが同じならYを詰める
       else if (GameState.CrocodilePositionY < GameState.TurtlePositionY)
       {
         GameState.CrocodilePositionY++;
@@ -91,8 +79,10 @@ namespace LearnStructuredProgramming.Section03_StructuredProgrammingPlus
     }
 
     /// <summary>
-    /// カメをユーザー入力に基づいて移動させる（縦横対応）
+    /// カメを指定方向に移動（ユーザー入力用）
     /// </summary>
+    /// <param name="directionX">X方向移動量</param>
+    /// <param name="directionY">Y方向移動量</param>
     public static void MoveTurtle(int directionX, int directionY)
     {
       int newX = GameState.TurtlePositionX + directionX;

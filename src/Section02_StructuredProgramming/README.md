@@ -12,8 +12,8 @@ Section01_UnstructuredProgrammingの非構造化プログラムを、構造化�
 ```csharp
 public static class GameState
 {
-    public static int FrogPosition;
-    public static int SnakePosition;
+    public static int TurtlePosition;
+    public static int CrocodilePosition;
     public static int Score;
     public static bool IsActive;
 }
@@ -24,10 +24,31 @@ public static class GameState
 ```csharp
 public static class CharacterMovement
 {
-    public static void MoveFrog(int direction)
+    public static void MoveTurtleAwayFromCrocodile()
     {
-        // グローバル変数を直接操作
-        GameState.FrogPosition += direction;
+        // ワニが近づいてきたら反対方向に逃げる
+        int distance = Math.Abs(GameState.TurtlePosition - GameState.CrocodilePosition);
+
+        // ワニが近くにいる場合（5マス以内）
+        if (distance <= 5)
+        {
+            int newPosition;
+            if (GameState.CrocodilePosition < GameState.TurtlePosition)
+            {
+                // ワニが左にいるので右に逃げる
+                newPosition = GameState.TurtlePosition + 1;
+            }
+            else
+            {
+                // ワニが右にいるので左に逃げる
+                newPosition = GameState.TurtlePosition - 1;
+            }
+
+            if (GameRules.IsWithinBounds(newPosition))
+            {
+                GameState.TurtlePosition = newPosition;
+            }
+        }
     }
 }
 ```
@@ -60,17 +81,17 @@ public static class CharacterMovement
 | ------------------- | ------------------------------------------ |
 | `GameState.cs`      | グローバル変数と状態操作関数               |
 | `GameRules.cs`      | ゲームルール定義（定数と判定関数）         |
-| `CharacterMovement.cs` | キャラクター移動処理                    |
+| `CharacterMovement.cs` | キャラクター移動処理（カメの逃走、ワニの追跡） |
 | `GameRenderer.cs`   | 画面描画処理                               |
 | `InputHandler.cs`   | ユーザー入力処理                           |
 | `GameLogic.cs`      | ゲームロジック（衝突判定など）             |
-| `FrogVsSnakeGame.cs` | メインゲームループ                         |
+| `TurtleVsCrocodileGame.cs` | メインゲームループ                         |
 | `README.md`        | このファイル                               |
 
 ## 実行フロー
 
 ```csharp
-public class FrogVsSnakeGame
+public class TurtleVsCrocodileGame
 {
     public void Run()
     {
@@ -79,8 +100,8 @@ public class FrogVsSnakeGame
         while (GameState.IsActive)  // 繰り返し処理
         {
             GameRenderer.RenderGameScreen();       // 画面を描画
-            InputHandler.ProcessInput();           // 入力を処理
-            CharacterMovement.MoveSnakeTowardsFrog(); // ヘビを移動
+            InputHandler.ProcessInput();           // 入力を処理（カメがワニから逃げる）
+            CharacterMovement.MoveCrocodileTowardsTurtle(); // ワニを移動
             
             if (GameLogic.IsCollisionDetected())   // 選択処理
             {
@@ -114,7 +135,7 @@ goto 文による複雑な制御フロー
 ## 使用例
 
 ```csharp
-var game = new FrogVsSnakeGame();
+var game = new TurtleVsCrocodileGame();
 game.Run();
 ```
 
