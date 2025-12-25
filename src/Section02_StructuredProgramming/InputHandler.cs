@@ -4,24 +4,28 @@ using System.Threading;
 namespace LearnStructuredProgramming.Section02_StructuredProgramming
 {
   /// <summary>
-  /// 構造化プログラミング用のユーザー入力処理関数
+  /// ユーザー入力を処理する静的クラス
+  ///
+  /// ■ 責務
+  /// コンソールからのキー入力を検出し、対応するアクションを実行します。
+  /// 入力がない場合は、カメの自動逃走行動を発動させます。
+  ///
+  /// ■ 対応キー
+  /// - A/←: 左移動
+  /// - D/→: 右移動
+  /// - Q: ゲーム終了
   /// </summary>
   public static class InputHandler
   {
     /// <summary>
-    /// ユーザー入力を処理してゲーム状態を更新する
+    /// 毎フレーム呼び出される入力処理（入力なしなら自動逃走）
     /// </summary>
-    /// <remarks>
-    /// 【改修内容】カメの動きをワニから逃げる動作に変更
-    ///
-    /// このメソッドは毎フレーム（ExecuteGameTick()の各呼び出し）で実行される。
-    /// カメはワニが近づいてきたら反対方向に逃げる。
-    /// </remarks>
+    /// <returns>ゲーム継続ならtrue</returns>
     public static bool ProcessInput()
     {
       if (!IsKeyAvailable())
       {
-        // 入力がない場合は、カメがワニから逃げる
+        // 入力なし: 自動逃走行動
         CharacterMovement.MoveTurtleAwayFromCrocodile();
         return true;
       }
@@ -30,6 +34,9 @@ namespace LearnStructuredProgramming.Section02_StructuredProgramming
       return ProcessKeyInput(keyInfo);
     }
 
+    /// <summary>
+    /// キー入力可能か確認（リダイレクト環境考慮）
+    /// </summary>
     private static bool IsKeyAvailable()
     {
       try
@@ -38,11 +45,14 @@ namespace LearnStructuredProgramming.Section02_StructuredProgramming
       }
       catch (InvalidOperationException)
       {
-        // コンソール入力がリダイレクトされている環境では KeyAvailable は使用不可
+        // リダイレクト環境ではKeyAvailable不可
         return false;
       }
     }
 
+    /// <summary>
+    /// キー入力に応じたアクションを実行
+    /// </summary>
     private static bool ProcessKeyInput(ConsoleKeyInfo keyInfo)
     {
       return keyInfo.Key switch
@@ -57,7 +67,6 @@ namespace LearnStructuredProgramming.Section02_StructuredProgramming
           HandleQuitInput(),
 
         _ =>
-          // 無効なキーは無視してワニから逃げる動作を続ける
           HandleEscapeMovement()
       };
     }
