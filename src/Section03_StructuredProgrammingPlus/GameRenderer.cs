@@ -3,12 +3,18 @@ using System;
 namespace LearnStructuredProgramming.Section03_StructuredProgrammingPlus
 {
   /// <summary>
-  /// 構造化プログラミング用のゲーム画面描画処理関数
+  /// コンソール画面への描画を担当する静的クラス（2D対応）
+  ///
+  /// ■ 責務
+  /// 32x32の2Dゲームボードをコンソールに描画します。
+  ///
+  /// ■ Section02からの変更点
+  /// RenderGameRowがY座標を受け取り、2D描画に対応。
   /// </summary>
   public static class GameRenderer
   {
     /// <summary>
-    /// ゲーム画面全体を描画
+    /// ゲーム画面全体を再描画
     /// </summary>
     public static void RenderGameScreen()
     {
