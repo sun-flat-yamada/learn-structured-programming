@@ -3,12 +3,20 @@ using System;
 namespace LearnStructuredProgramming.Section02_StructuredProgramming
 {
   /// <summary>
-  /// 構造化プログラミング用のゲーム画面描画処理関数
+  /// コンソール画面への描画を担当する静的クラス
+  ///
+  /// ■ 責務
+  /// ゲーム画面（ヘッダー、ボード、操作説明）およびゲームオーバー画面の
+  /// 描画処理を提供します。
+  ///
+  /// ■ 設計意図
+  /// 描画処理を1つのクラスに集約することで、
+  /// 表示変更時の影響範囲を限定しています。
   /// </summary>
   public static class GameRenderer
   {
     /// <summary>
-    /// ゲーム画面全体を描画
+    /// ゲーム画面全体を再描画
     /// </summary>
     public static void RenderGameScreen()
     {

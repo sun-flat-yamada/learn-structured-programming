@@ -7,7 +7,7 @@
 このプロジェクトは、C#の基礎から応用までの構造化プログラミング技法を学ぶためのリソース集です。
 
 - ✅ **DevContainer対応**: Docker + VS Code での統一開発環境
-- ✅ **.NET 8.0**: 最新の .NET SDK を使用
+- ✅ **.NET 9.0**: 最新の .NET SDK を使用
 - ✅ **エンタープライズグレード**: Roslyn解析器、Code品質ツール標準装備
 
 ## 🚀 クイックスタート
@@ -193,7 +193,7 @@ code .
 
 ```bash
 # コンテナ内のターミナルで実行
-dotnet --version   # .NET 8.0 が表示される
+dotnet --version   # .NET 9.0 が表示される
 docker --version   # Docker バージョン確認
 
 # プロジェクトビルド
@@ -367,15 +367,15 @@ learn-structured-programming/
 
 ### セクション1: 非構造化プログラミング（構造化プログラミング手法を適用しない実装）
 
-#### FrogVsSnakeGame（カエルVSヘビゲーム）
+#### TurtleVsCrocodileGame（カメVSワニゲーム）
 
 **概要**: ジャンプコード（`goto`文）を使用した非構造化プログラムの実装例です。
 
 **プログラム仕様**:
 
-- **カエル🐸**: ユーザーが [A] キーで左、[D] キーで右に移動できます
-- **ヘビ🐍**: カエルを追いかけ、自動的にカエルに近づきます
-- **ゲームオーバー**: ヘビがカエルに追いついたら終了します
+- **カメ🐢**: ユーザーが [A] キーで左、[D] キーで右に移動できます
+- **ワニ🐊**: カメを追いかけ、自動的にカメに近づきます
+- **ゲームオーバー**: ワニがカメに追いついたら終了します
 - **スコア**: 生き残った時間がスコアとして加算されます
 
 **実装の特徴**:
@@ -393,9 +393,44 @@ dotnet run
 
 **操作方法**:
 
-- **[A]** または **[←]**: カエルを左に移動
-- **[D]** または **[→]**: カエルを右に移動
+- **[A]** または **[←]**: カメを左に移動
+- **[D]** または **[→]**: カメを右に移動
 - **[Q]**: ゲームを終了
+
+### セクション2: 構造化プログラミング
+
+**概要**: Section01のgoto文を使った非構造化プログラムを、構造化プログラミングの原則（ループと条件分岐のみ）に従って書き直したバージョンです。
+
+**特徴**:
+- グローバル変数による状態管理
+- 静的関数による手続き型プログラミング
+- goto文の廃止（while、if-else、forのみで制御）
+- カメはワニが近づいてきたら反対方向に逃げる
+
+詳細は [src/Section02_StructuredProgramming/README.md](./src/Section02_StructuredProgramming/README.md) を参照してください。
+
+### セクション3: 構造化プログラミング（2D拡張版）
+
+**概要**: Section02を拡張し、32x32のマス目内を縦横自由に動くバージョンです。
+
+**特徴**:
+- 2D座標システム（X/Y座標）
+- カメは4方向（上下左右）にランダム移動
+- ワニも2D空間でカメを追跡
+
+詳細は [src/Section03_StructuredProgrammingPlus/README.md](./src/Section03_StructuredProgrammingPlus/README.md) を参照してください。
+
+### セクション4: オブジェクト指向プログラミング
+
+**概要**: Section03のコードをオブジェクト指向設計の原則（SOLID原則、デザインパターン）に基づいて完全に作り直したバージョンです。
+
+**特徴**:
+- SOLID原則の適用
+- デザインパターン（Template Method、Strategy、Observer、Facade）
+- 依存性の注入（DI）
+- インターフェースによる疎結合設計
+
+詳細は [src/Section04_ObjectOrientedProgramming/README.md](./src/Section04_ObjectOrientedProgramming/README.md) を参照してください。
 
 ## 🛠️ 開発環境仕様
 
@@ -403,10 +438,10 @@ dotnet run
 
 | 項目                | 仕様                               |
 | ------------------- | ---------------------------------- |
-| **Base Image**      | `mcr.microsoft.com/dotnet/sdk:8.0` |
-| **.NET バージョン** | 8.0 LTS                            |
+| **Base Image**      | `mcr.microsoft.com/dotnet/sdk:9.0` |
+| **.NET バージョン** | 9.0                                |
 | **OS**              | Linux (Debian 12)                  |
-| **C# バージョン**   | 12.0                               |
+| **C# バージョン**   | 13.0                               |
 
 ### リソース割当
 
@@ -446,10 +481,6 @@ DevContainer のリソース（CPU・メモリ）を調整する必要がある�
 #### ⚠️ 注意事項
 
 - **ホストマシンのリソース確認**: DevContainer に割り当てたリソースはホストから確保されます
-  - Windows: Docker Desktop 設定で確認可能
-  - Mac: Docker Desktop 設定 → Resources タブ
-  - Linux: Docker daemon のメモリ上限値を確認
-
 - **メモリ不足エラーが発生した場合**:
 
 ```bash
@@ -543,7 +574,7 @@ editor.defaultFormatter: ms-dotnettools.csharp
 ### 環境変数 (コンテナ内)
 
 ```env
-DOTNET_CLI_TELEMETRY_OPTOUT=true      # テレメトリ無効化
+DOTNET_CLI_TELEMETRY_OPTOUT=true       # テレメトリ無効化
 DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true # 初回実行スキップ
 ```
 
@@ -627,14 +658,14 @@ dotnet tool restore --configfile nuget.config
 - **言語**: C# 12.0
 - **スタイル**: EditorConfig に準拠
 - **分析**: Roslyn Analyzer により自動チェック
-- **インデント**: スペース4文字
+- **インデント**: スペース2文字
 
 ## 📋 チェックリスト
 
 DevContainer が正常に動作しているか確認:
 
 - [ ] コンテナがビルド・起動できる
-- [ ] `dotnet --version` で .NET 8.0 が表示される
+- [ ] `dotnet --version` で .NET 9.0 が表示される
 - [ ] `dotnet build` が成功する
 - [ ] VS Code 拡張機能がすべてインストール済み
 - [ ] C# IntelliSense が動作する
@@ -644,7 +675,7 @@ DevContainer が正常に動作しているか確認:
 
 ### 公式ドキュメント
 
-- [.NET 8.0 Documentation](https://learn.microsoft.com/en-us/dotnet/)
+- [.NET 9.0 Documentation](https://learn.microsoft.com/en-us/dotnet/)
 - [C# Programming Guide](https://learn.microsoft.com/en-us/dotnet/csharp/)
 - [Dev Containers Documentation](https://containers.dev/)
 
@@ -685,4 +716,4 @@ dotnet restore
 ---
 
 **最終更新**: 2025-12-22 Youhei Yamada
-**環境**: .NET 8.0 LTS | VS Code | Docker | DevContainer
+**環境**: .NET 9.0 LTS | VS Code | Docker | DevContainer

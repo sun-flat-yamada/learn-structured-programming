@@ -6,8 +6,7 @@
     "window.activeBorder": "#b1f010A0",
     "window.inactiveBorder": "#5c5cff",
     "activityBar.border": "#b1f010A0",
-    "editorGroupHeader.tabsBorder": "#b1f010A0",
-    "titleBar.border": "#b1f010A0"
+    "editorGroupHeader.tabsBorder": "#b1f010A0"
   },
   "workbench.editorLargeFileConfirmation": 256,
 
@@ -117,13 +116,6 @@
     "editor.tabSize": 2,
     "editor.insertSpaces": true
   },
-
-  // === OmniSharp Configuration ===
-  "omnisharp.enableEditorConfigSupport": true,
-  "omnisharp.enableRoslynAnalyzers": true,
-  "omnisharp.enableReferenceCodeLens": true,
-  "omnisharp.enableAsyncCompletion": true,
-  "omnisharp.maxProjectFileCountForDiagnosticAnalysis": 10,
 
   // === C# Dev Kit Configuration ===
   "dotnetAcquisitionExtension.enableTelemetry": false,

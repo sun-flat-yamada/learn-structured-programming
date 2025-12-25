@@ -51,12 +51,6 @@
         "GitHub.copilot-chat"
       ],
       "settings": {
-        // === C# Analysis Settings ===
-        "omnisharp.enableRoslynAnalyzers": true,
-        "omnisharp.enableEditorConfigSupport": true,
-        "omnisharp.enableReferenceCodeLens": true,
-        "omnisharp.organizeImportsOnFormat": true,
-
         // === Code Formatting ===
         "editor.formatOnSave": true,
         "editor.defaultFormatter": "ms-dotnettools.csharp",
