@@ -50,6 +50,13 @@
       ],
       "problemMatcher": "$msCompile"
     },
+    {
+      "label": "clean (force / full)",
+      "type": "shell",
+      "command": "rm -rf ${workspaceFolder}/bin ${workspaceFolder}/obj",
+      "problemMatcher": [],
+      "detail": "bin/ と obj/ ディレクトリを完全に削除します"
+    },
 
     // ========================================
     // Test Tasks
