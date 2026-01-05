@@ -1,5 +1,6 @@
 using System;
 
+using LearnStructuredProgramming.Section00_UnstructuredProgramming;
 using LearnStructuredProgramming.Section01_UnstructuredProgramming;
 using LearnStructuredProgramming.Section02_StructuredProgramming;
 using LearnStructuredProgramming.Section03_StructuredProgrammingPlus;
@@ -17,7 +18,8 @@ namespace LearnStructuredProgramming;
 /// 実装することで、各パラダイムの特徴と利点を比較できます。
 ///
 /// ■ 学習できる内容
-/// - Section01: 非構造化プログラミング（goto文によるフロー制御）
+/// - Section00: 非構造化プログラミング入門（グローバル変数、手続き的プログラミング）
+/// - Section01: 非構造化プログラミング（グラフィック化、goto文によるフロー制御）
 /// - Section02: 構造化プログラミング（関数分割、ループ、条件分岐）
 /// - Section03: 構造化プログラミング拡張（2D移動、モジュール分割）
 /// - Section04: オブジェクト指向プログラミング（クラス設計、SOLID原則）
@@ -52,7 +54,10 @@ public static class Program
 
     Console.WriteLine("実行するサンプルを選択してください:");
     Console.WriteLine();
-    Console.WriteLine("  [1] セクション1: 非構造化プログラミング (goto文使用)");
+    Console.WriteLine("  [0] セクション0: 非構造化プログラミング (グローバル変数、手続き的プログラミング)");
+    Console.WriteLine("      - TurtleVsCrocodileGame: カメ(🐢) vs ワニ(🐊) ゲーム");
+    Console.WriteLine();
+    Console.WriteLine("  [1] セクション1: 非構造化プログラミング (グラフィック化、goto文によるフロー制御)");
     Console.WriteLine("      - TurtleVsCrocodileGame: カメ(🐢) vs ワニ(🐊) ゲーム");
     Console.WriteLine();
     Console.WriteLine("  [2] セクション2: 構造化プログラミング (改善版)");
@@ -67,14 +72,20 @@ public static class Program
     Console.WriteLine("  [5] セクション5: オブジェクト指向プログラミング (拡張版)");
     Console.WriteLine("      - LifeGame Plus: 生命の逃避行 🐢 💨 🦎 💨 🐊");
     Console.WriteLine();
-    Console.WriteLine("  [0] 終了");
+    Console.WriteLine("  [q] 終了");
     Console.WriteLine();
 
-    Console.Write("選択 (0-5): ");
+    Console.Write("選択 (0-5, q): ");
     string? input = Console.ReadLine();
 
     // 入力に応じたゲームを起動（再帰的にメニュー表示）
-    if (input == "1")
+    if (input == "0")
+    {
+      var game = new Section00_UnstructuredProgramming.TurtleVsCrocodileGame();
+      game.Run();
+      displayMenu();
+    }
+    else if (input == "1")
     {
       var game = new Section01_UnstructuredProgramming.TurtleVsCrocodileGame();
       game.Run();
@@ -104,7 +115,7 @@ public static class Program
       game.Run();
       displayMenu();
     }
-    else if (input == "0")
+    else if (input == "q" || input == "Q")
     {
       Console.WriteLine("終了します。");
     }
