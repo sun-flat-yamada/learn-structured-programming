@@ -1,82 +1,82 @@
 using System;
+
 using LearnStructuredProgramming.Section05_ObjectOrientedProgrammingPlus.Application.Interfaces;
 using LearnStructuredProgramming.Section05_ObjectOrientedProgrammingPlus.Domain.Entities;
 
-namespace LearnStructuredProgramming.Section05_ObjectOrientedProgrammingPlus.Infrastructure.Input
+namespace LearnStructuredProgramming.Section05_ObjectOrientedProgrammingPlus.Infrastructure.Input;
+
+/// <summary>
+/// コンソール入力ハンドラー
+///
+/// ■ 責務
+/// コンソールからのキー入力を受け取り、
+/// プレイヤー操作またはシステムコマンドに変換します。
+/// WASDおよび矢印キーによる移動をサポートします。
+/// </summary>
+public sealed class ConsoleInputHandler : IInputHandler
 {
-  /// <summary>
-  /// コンソール入力ハンドラー
-  ///
-  /// ■ 責務
-  /// コンソールからのキー入力を受け取り、
-  /// プレイヤー操作またはシステムコマンドに変換します。
-  /// WASDおよび矢印キーによる移動をサポートします。
-  /// </summary>
-  public sealed class ConsoleInputHandler : IInputHandler
+  public InputResult ProcessInput(Player player)
   {
-    public InputResult ProcessInput(Player player)
+    if (!tryGetKey(out var keyInfo))
     {
-      if (!TryGetKey(out var keyInfo))
-      {
-        return InputResult.Continue;
-      }
-
-      return ProcessKeyInput(keyInfo, player);
+      return InputResult.Continue;
     }
 
-    private static bool TryGetKey(out ConsoleKeyInfo keyInfo)
+    return processKeyInput(keyInfo, player);
+  }
+
+  private static bool tryGetKey(out ConsoleKeyInfo keyInfo)
+  {
+    keyInfo = default;
+
+    try
     {
-      keyInfo = default;
-
-      try
-      {
-        if (!Console.KeyAvailable)
-          return false;
-
-        keyInfo = Console.ReadKey(intercept: true);
-        return true;
-      }
-      catch (InvalidOperationException)
-      {
-        // コンソール入力がリダイレクトされている環境
+      if (!Console.KeyAvailable)
         return false;
-      }
+
+      keyInfo = Console.ReadKey(intercept: true);
+      return true;
     }
-
-    private static InputResult ProcessKeyInput(ConsoleKeyInfo keyInfo, Player player)
+    catch (InvalidOperationException)
     {
-      switch (keyInfo.Key)
-      {
-        case ConsoleKey.W:
-        case ConsoleKey.UpArrow:
-          player.MoveUp();
-          return InputResult.Moved;
+      // コンソール入力がリダイレクトされている環境
+      return false;
+    }
+  }
 
-        case ConsoleKey.S:
-        case ConsoleKey.DownArrow:
-          player.MoveDown();
-          return InputResult.Moved;
+  private static InputResult processKeyInput(ConsoleKeyInfo keyInfo, Player player)
+  {
+    switch (keyInfo.Key)
+    {
+      case ConsoleKey.W:
+      case ConsoleKey.UpArrow:
+        player.MoveUp();
+        return InputResult.Moved;
 
-        case ConsoleKey.A:
-        case ConsoleKey.LeftArrow:
-          player.MoveLeft();
-          return InputResult.Moved;
+      case ConsoleKey.S:
+      case ConsoleKey.DownArrow:
+        player.MoveDown();
+        return InputResult.Moved;
 
-        case ConsoleKey.D:
-        case ConsoleKey.RightArrow:
-          player.MoveRight();
-          return InputResult.Moved;
+      case ConsoleKey.A:
+      case ConsoleKey.LeftArrow:
+        player.MoveLeft();
+        return InputResult.Moved;
 
-        case ConsoleKey.P:
-          return InputResult.Pause;
+      case ConsoleKey.D:
+      case ConsoleKey.RightArrow:
+        player.MoveRight();
+        return InputResult.Moved;
 
-        case ConsoleKey.Q:
-        case ConsoleKey.Escape:
-          return InputResult.Quit;
+      case ConsoleKey.P:
+        return InputResult.Pause;
 
-        default:
-          return InputResult.Continue;
-      }
+      case ConsoleKey.Q:
+      case ConsoleKey.Escape:
+        return InputResult.Quit;
+
+      default:
+        return InputResult.Continue;
     }
   }
 }

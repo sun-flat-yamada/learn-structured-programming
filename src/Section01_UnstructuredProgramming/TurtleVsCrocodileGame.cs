@@ -1,308 +1,307 @@
 using System;
 using System.Threading;
 
-namespace LearnStructuredProgramming.Section01_UnstructuredProgramming
+namespace LearnStructuredProgramming.Section01_UnstructuredProgramming;
+
+/// <summary>
+/// カメ vs ワニゲーム - 非構造化プログラミング版
+///
+/// ■ 教育目的
+/// このクラスは「非構造化プログラミング」の問題点を示すための反面教師です。
+/// goto文を使用したスパゲッティコードがいかに読みにくく、保守困難かを体験できます。
+///
+/// ■ 非構造化プログラミングの特徴
+/// - goto文によるフロー制御（ラベルジャンプ）
+/// - 処理の流れが追いにくい
+/// - 変更時の影響範囲が予測困難
+/// - ダイクストラ氏が1968年に「goto文は有害」と提唱
+///
+/// ■ ゲームルール
+/// - カメ🐢: 左右に移動、ワニが近づくと自動で逃げる
+/// - ワニ🐊: カメを追跡
+/// - ワニがカメに追いつくとゲームオーバー
+///
+/// ■ 注意
+/// 実際の開発ではgoto文を避け、構造化された制御構文を使用してください。
+/// </summary>
+public class TurtleVsCrocodileGame
 {
+  // ゲームボードの定数
+  private const int GAME_WIDTH = 32;
+  private const int GAME_HEIGHT = 1;
+  private const int INITIAL_TURTLE_POSITION = 20;
+  private const int INITIAL_CROCODILE_POSITION = 5;
+
+  // キャラクター位置
+  private int _turtlePosition;
+  private int _crocodilePosition;
+
+  // ゲーム状態
+  private int _score;
+  private bool _gameActive;
+  private Random _random = new();
+
   /// <summary>
-  /// カメ vs ワニゲーム - 非構造化プログラミング版
-  ///
-  /// ■ 教育目的
-  /// このクラスは「非構造化プログラミング」の問題点を示すための反面教師です。
-  /// goto文を使用したスパゲッティコードがいかに読みにくく、保守困難かを体験できます。
-  ///
-  /// ■ 非構造化プログラミングの特徴
-  /// - goto文によるフロー制御（ラベルジャンプ）
-  /// - 処理の流れが追いにくい
-  /// - 変更時の影響範囲が予測困難
-  /// - ダイクストラ氏が1968年に「goto文は有害」と提唱
-  ///
-  /// ■ ゲームルール
-  /// - カメ🐢: 左右に移動、ワニが近づくと自動で逃げる
-  /// - ワニ🐊: カメを追跡
-  /// - ワニがカメに追いつくとゲームオーバー
-  ///
-  /// ■ 注意
-  /// 実際の開発ではgoto文を避け、構造化された制御構文を使用してください。
+  /// ゲームを実行（goto文によるメインループ）
   /// </summary>
-  public class TurtleVsCrocodileGame
+  public void Run()
   {
-    // ゲームボードの定数
-    private const int GameWidth = 32;
-    private const int GameHeight = 1;
-    private const int InitialTurtlePosition = 20;
-    private const int InitialCrocodilePosition = 5;
+    Console.Clear();
+    Console.CursorVisible = false;
 
-    // キャラクター位置
-    private int turtlePosition;
-    private int crocodilePosition;
+    // ゲーム初期化
+    initializeGame();
 
-    // ゲーム状態
-    private int score;
-    private bool gameActive;
-    private Random random = new Random();
+  // メインループ（gotoラベル）
+  MainLoop:
 
-    /// <summary>
-    /// ゲームを実行（goto文によるメインループ）
-    /// </summary>
-    public void Run()
+    displayGame();
+
+    // 終了判定
+    if (!_gameActive)
     {
-      Console.Clear();
-      Console.CursorVisible = false;
-
-      // ゲーム初期化
-      InitializeGame();
-
-      // メインループ（gotoラベル）
-    MainLoop:
-
-      DisplayGame();
-
-      // 終了判定
-      if (!gameActive)
-      {
-        goto GameOver;
-      }
-
-      // 入力処理
-      ProcessInput();
-
-      // 敵の移動
-      MoveCrocodile();
-
-      // 衝突判定
-      if (turtlePosition == crocodilePosition)
-      {
-        gameActive = false;
-        goto GameOver;
-      }
-
-      score++;
-
-      // フレーム間隔
-      Thread.Sleep(200);
-
-      // ループ継続（gotoによるジャンプ）
-      goto MainLoop;
-
-      // 終了処理（gotoラベル）
-    GameOver:
-      DisplayGameOver();
-      Console.CursorVisible = true;
+      goto GameOver;
     }
 
-    /// <summary>
-    /// ゲーム状態を初期値にリセット
-    /// </summary>
-    private void InitializeGame()
+    // 入力処理
+    processInput();
+
+    // 敵の移動
+    moveCrocodile();
+
+    // 衝突判定
+    if (_turtlePosition == _crocodilePosition)
     {
-      turtlePosition = InitialTurtlePosition;
-      crocodilePosition = InitialCrocodilePosition;
-      score = 0;
-      gameActive = true;
-      random = new Random();
+      _gameActive = false;
+      goto GameOver;
     }
 
-    /// <summary>
-    /// 現在のゲーム画面を描画
-    /// </summary>
-    private void DisplayGame()
+    _score++;
+
+    // フレーム間隔
+    Thread.Sleep(200);
+
+    // ループ継続（gotoによるジャンプ）
+    goto MainLoop;
+
+  // 終了処理（gotoラベル）
+  GameOver:
+    displayGameOver();
+    Console.CursorVisible = true;
+  }
+
+  /// <summary>
+  /// ゲーム状態を初期値にリセット
+  /// </summary>
+  private void initializeGame()
+  {
+    _turtlePosition = INITIAL_TURTLE_POSITION;
+    _crocodilePosition = INITIAL_CROCODILE_POSITION;
+    _score = 0;
+    _gameActive = true;
+    _random = new Random();
+  }
+
+  /// <summary>
+  /// 現在のゲーム画面を描画
+  /// </summary>
+  private void displayGame()
+  {
+    Console.Clear();
+    Console.WriteLine("╔════════════════════════════════════════╗");
+    Console.WriteLine("║      カメVSワニゲーム                ║");
+    Console.WriteLine("╚════════════════════════════════════════╝");
+    Console.WriteLine();
+    Console.WriteLine($"スコア: {_score} | 操作: [A]左 [D]右 [Q]終了");
+    Console.WriteLine();
+
+    drawGameBoard();
+
+    Console.WriteLine();
+    Console.WriteLine("┌────────────────────────────────────────┐");
+    Console.WriteLine("│ カメ🐢: 左右矢印で移動                │");
+    Console.WriteLine("│ ワニ🐊: カメを追いかけます             │");
+    Console.WriteLine("│ ワニに捕まったらゲームオーバー          │");
+    Console.WriteLine("└────────────────────────────────────────┘");
+  }
+
+  /// <summary>
+  /// ゲームボード（キャラクター配置）を描画
+  /// </summary>
+  private void drawGameBoard()
+  {
+    // 上枠
+    Console.Write("║");
+    for (int i = 0; i < GAME_WIDTH; i++)
     {
-      Console.Clear();
-      Console.WriteLine("╔════════════════════════════════════════╗");
-      Console.WriteLine("║      カメVSワニゲーム                ║");
-      Console.WriteLine("╚════════════════════════════════════════╝");
-      Console.WriteLine();
-      Console.WriteLine($"スコア: {score} | 操作: [A]左 [D]右 [Q]終了");
-      Console.WriteLine();
-
-      DrawGameBoard();
-
-      Console.WriteLine();
-      Console.WriteLine("┌────────────────────────────────────────┐");
-      Console.WriteLine("│ カメ🐢: 左右矢印で移動                │");
-      Console.WriteLine("│ ワニ🐊: カメを追いかけます             │");
-      Console.WriteLine("│ ワニに捕まったらゲームオーバー          │");
-      Console.WriteLine("└────────────────────────────────────────┘");
+      Console.Write("─");
     }
+    Console.WriteLine("║");
 
-    /// <summary>
-    /// ゲームボード（キャラクター配置）を描画
-    /// </summary>
-    private void DrawGameBoard()
+    // ゲームエリア
+    for (int y = 0; y < GAME_HEIGHT; y++)
     {
-      // 上枠
       Console.Write("║");
-      for (int i = 0; i < GameWidth; i++)
-      {
-        Console.Write("─");
-      }
-      Console.WriteLine("║");
 
-      // ゲームエリア
-      for (int y = 0; y < GameHeight; y++)
+      for (int x = 0; x < GAME_WIDTH; x++)
       {
-        Console.Write("║");
-
-        for (int x = 0; x < GameWidth; x++)
+        if (x == _crocodilePosition)
         {
-          if (x == crocodilePosition)
-          {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.Write("🐊");
-            Console.ResetColor();
-            x++; // 絵文字は2文字幅
-          }
-          else if (x == turtlePosition)
-          {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.Write("🐢");
-            Console.ResetColor();
-            x++; // 絵文字は2文字幅
-          }
-          else
-          {
-            Console.Write(" ");
-          }
+          Console.ForegroundColor = ConsoleColor.Red;
+          Console.Write("🐊");
+          Console.ResetColor();
+          x++; // 絵文字は2文字幅
         }
-
-        // 残りスペースを埋める
-        int filledWidth = 0;
-        if (crocodilePosition < GameWidth)
-          filledWidth += 2;
-        if (turtlePosition < GameWidth)
-          filledWidth += 2;
-
-        for (int i = filledWidth; i < GameWidth; i++)
+        else if (x == _turtlePosition)
+        {
+          Console.ForegroundColor = ConsoleColor.Green;
+          Console.Write("🐢");
+          Console.ResetColor();
+          x++; // 絵文字は2文字幅
+        }
+        else
         {
           Console.Write(" ");
         }
-
-        Console.WriteLine("║");
       }
 
-      // 下枠
-      Console.Write("║");
-      for (int i = 0; i < GameWidth; i++)
+      // 残りスペースを埋める
+      int filledWidth = 0;
+      if (_crocodilePosition < GAME_WIDTH)
+        filledWidth += 2;
+      if (_turtlePosition < GAME_WIDTH)
+        filledWidth += 2;
+
+      for (int i = filledWidth; i < GAME_WIDTH; i++)
       {
-        Console.Write("─");
+        Console.Write(" ");
       }
+
       Console.WriteLine("║");
     }
 
-    /// <summary>
-    /// ユーザー入力とカメの自動逃走を処理
-    /// </summary>
-    private void ProcessInput()
+    // 下枠
+    Console.Write("║");
+    for (int i = 0; i < GAME_WIDTH; i++)
     {
-      // 入力がなければ自動で逃走行動
-      MoveTurtleAwayFromCrocodile();
+      Console.Write("─");
+    }
+    Console.WriteLine("║");
+  }
 
-      try
+  /// <summary>
+  /// ユーザー入力とカメの自動逃走を処理
+  /// </summary>
+  private void processInput()
+  {
+    // 入力がなければ自動で逃走行動
+    moveTurtleAwayFromCrocodile();
+
+    try
+    {
+      if (!Console.KeyAvailable)
       {
-        if (!Console.KeyAvailable)
-        {
-          return;
-        }
-      }
-      catch (InvalidOperationException)
-      {
-        // リダイレクト環境ではKeyAvailable不可
         return;
       }
-
-      ConsoleKeyInfo keyInfo = Console.ReadKey(true);
-
-      // キー入力に応じた移動
-      switch (keyInfo.Key)
-      {
-        case ConsoleKey.A:
-        case ConsoleKey.LeftArrow:
-          if (turtlePosition > 0)
-          {
-            turtlePosition--;
-          }
-          break;
-
-        case ConsoleKey.D:
-        case ConsoleKey.RightArrow:
-          if (turtlePosition < GameWidth - 2)
-          {
-            turtlePosition++;
-          }
-          break;
-
-        case ConsoleKey.Q:
-          gameActive = false;
-          break;
-
-        default:
-          break;
-      }
+    }
+    catch (InvalidOperationException)
+    {
+      // リダイレクト環境ではKeyAvailable不可
+      return;
     }
 
-    /// <summary>
-    /// カメをワニから遠ざける（ワニが5マス以内のとき）
-    /// </summary>
-    private void MoveTurtleAwayFromCrocodile()
-    {
-      int distance = Math.Abs(turtlePosition - crocodilePosition);
+    ConsoleKeyInfo keyInfo = Console.ReadKey(true);
 
-      // 危険距離内なら逃走
-      if (distance <= 5)
-      {
-        if (crocodilePosition < turtlePosition)
+    // キー入力に応じた移動
+    switch (keyInfo.Key)
+    {
+      case ConsoleKey.A:
+      case ConsoleKey.LeftArrow:
+        if (_turtlePosition > 0)
         {
-          // ワニが左にいるので右へ
-          if (turtlePosition < GameWidth - 2)
-          {
-            turtlePosition++;
-          }
+          _turtlePosition--;
         }
-        else if (crocodilePosition > turtlePosition)
+        break;
+
+      case ConsoleKey.D:
+      case ConsoleKey.RightArrow:
+        if (_turtlePosition < GAME_WIDTH - 2)
         {
-          // ワニが右にいるので左へ
-          if (turtlePosition > 0)
-          {
-            turtlePosition--;
-          }
+          _turtlePosition++;
+        }
+        break;
+
+      case ConsoleKey.Q:
+        _gameActive = false;
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  /// <summary>
+  /// カメをワニから遠ざける（ワニが5マス以内のとき）
+  /// </summary>
+  private void moveTurtleAwayFromCrocodile()
+  {
+    int distance = Math.Abs(_turtlePosition - _crocodilePosition);
+
+    // 危険距離内なら逃走
+    if (distance <= 5)
+    {
+      if (_crocodilePosition < _turtlePosition)
+      {
+        // ワニが左にいるので右へ
+        if (_turtlePosition < GAME_WIDTH - 2)
+        {
+          _turtlePosition++;
         }
       }
-    }
-
-    /// <summary>
-    /// ワニをカメに向かって移動
-    /// </summary>
-    private void MoveCrocodile()
-    {
-      // 単純追跡AI
-      if (crocodilePosition < turtlePosition)
+      else if (_crocodilePosition > _turtlePosition)
       {
-        crocodilePosition++;
-      }
-      else if (crocodilePosition > turtlePosition)
-      {
-        crocodilePosition--;
+        // ワニが右にいるので左へ
+        if (_turtlePosition > 0)
+        {
+          _turtlePosition--;
+        }
       }
     }
+  }
 
-    /// <summary>
-    /// ゲームオーバー画面を表示
-    /// </summary>
-    private void DisplayGameOver()
+  /// <summary>
+  /// ワニをカメに向かって移動
+  /// </summary>
+  private void moveCrocodile()
+  {
+    // 単純追跡AI
+    if (_crocodilePosition < _turtlePosition)
     {
-      Console.Clear();
-      Console.WriteLine("╔════════════════════════════════════════╗");
-      Console.WriteLine("║        ゲーム オーバー                 ║");
-      Console.WriteLine("╚════════════════════════════════════════╝");
-      Console.WriteLine();
-      Console.ForegroundColor = ConsoleColor.Red;
-      Console.WriteLine("ワニがカメを捕食しました！");
-      Console.ResetColor();
-      Console.WriteLine();
-      Console.WriteLine($"最終スコア: {score}");
-      Console.WriteLine();
-      Console.WriteLine("Enterキーを押して終了...");
-      Console.ReadLine();
+      _crocodilePosition++;
     }
+    else if (_crocodilePosition > _turtlePosition)
+    {
+      _crocodilePosition--;
+    }
+  }
+
+  /// <summary>
+  /// ゲームオーバー画面を表示
+  /// </summary>
+  private void displayGameOver()
+  {
+    Console.Clear();
+    Console.WriteLine("╔════════════════════════════════════════╗");
+    Console.WriteLine("║        ゲーム オーバー                 ║");
+    Console.WriteLine("╚════════════════════════════════════════╝");
+    Console.WriteLine();
+    Console.ForegroundColor = ConsoleColor.Red;
+    Console.WriteLine("ワニがカメを捕食しました！");
+    Console.ResetColor();
+    Console.WriteLine();
+    Console.WriteLine($"最終スコア: {_score}");
+    Console.WriteLine();
+    Console.WriteLine("Enterキーを押して終了...");
+    Console.ReadLine();
   }
 }
