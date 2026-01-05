@@ -1,5 +1,5 @@
 {
-  "name": "csharp-dev-env-for-lern-structured-programming",
+  "name": "csharp-dev-env-for-learn-structured-programming",
   "image": "mcr.microsoft.com/dotnet/sdk:9.0",
 
   // === Features Configuration ===
@@ -76,7 +76,7 @@
   ],
 
   // === Initialization Commands ===
-  "postCreateCommand": "bash -c 'git config --global --add safe.directory /workspaces/learn-structured-programming && dotnet restore && dotnet tool restore'",
+  "postCreateCommand": "bash -c 'apt-get update && apt-get install -y procps less lsof net-tools iputils-ping curl wget vim nano htop tree zip unzip jq && git config --global --add safe.directory /workspaces/learn-dev-env-csharp && dotnet restore && dotnet tool restore'",
   "postStartCommand": "dotnet build --no-restore 2>/dev/null || true",
 
   // === Container Configuration ===
