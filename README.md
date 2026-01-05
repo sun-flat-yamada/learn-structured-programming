@@ -347,13 +347,15 @@ DevContainer 環境が完全にセットアップできたか確認:
 ```text
 learn-structured-programming/
 ├── .devcontainer/
-│   └── devcontainer.json                   # DevContainer設定
+│   └── devcontainer.json                    # DevContainer設定
 ├── learn-structured-programming.csproj      # プロジェクトファイル
 ├── Program.cs                               # メインプログラム
 ├── README.md                                # このファイル
 ├── LICENSE                                  # ライセンス
 └── src/                                     # 講座用ソースコード
-    └── Section01_UnstructuredProgramming/   # セクション1: 非構造化プログラミング版
+    └── Section00_UnstructuredProgramming/   # セクション0: 非構造化プログラミング版(グローバル変数、手続き的プログラミング)
+    │  └── (files)
+    └── Section01_UnstructuredProgramming/   # セクション1: 非構造化プログラミング版(グラフィック化、goto文によるフロー制御)
     │  └── (files)
     └── Section02_StructuredProgramming/     # セクション2: 構造化プログラミング版
     │  └── (files)
