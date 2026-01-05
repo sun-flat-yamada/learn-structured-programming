@@ -133,6 +133,8 @@ csharp_prefer_simple_using_statement = true:warning
 dotnet_naming_style.pascal_case_style.capitalization = pascal_case
 dotnet_naming_style.camel_case_style.capitalization = camel_case
 dotnet_naming_style.upper_case_style.capitalization = all_upper
+dotnet_naming_style.underscore_camel_case_style.required_prefix = _
+dotnet_naming_style.underscore_camel_case_style.capitalization = camel_case
 
 # Rule: Public members should be PascalCase
 dotnet_naming_rule.public_members_should_be_pascal_case.severity = warning
@@ -142,11 +144,18 @@ dotnet_naming_symbols.public_symbols.applicable_kinds = property,method,field,ev
 dotnet_naming_symbols.public_symbols.applicable_accessibilities = public
 dotnet_naming_symbols.public_symbols.required_modifiers =
 
-# Rule: Private/internal members should be camelCase
+# Rule: Private fields should be _camelCase (with underscore prefix)
+dotnet_naming_rule.private_fields_should_be_underscore_camel_case.severity = warning
+dotnet_naming_rule.private_fields_should_be_underscore_camel_case.symbols = private_fields
+dotnet_naming_rule.private_fields_should_be_underscore_camel_case.style = underscore_camel_case_style
+dotnet_naming_symbols.private_fields.applicable_kinds = field
+dotnet_naming_symbols.private_fields.applicable_accessibilities = private,internal,protected,protected_internal,private_protected
+
+# Rule: Private methods/properties should be camelCase
 dotnet_naming_rule.private_members_should_be_camel_case.severity = warning
 dotnet_naming_rule.private_members_should_be_camel_case.symbols = private_symbols
 dotnet_naming_rule.private_members_should_be_camel_case.style = camel_case_style
-dotnet_naming_symbols.private_symbols.applicable_kinds = property,method,field,event,delegate
+dotnet_naming_symbols.private_symbols.applicable_kinds = property,method,event,delegate
 dotnet_naming_symbols.private_symbols.applicable_accessibilities = private,internal,protected_internal
 dotnet_naming_symbols.private_symbols.required_modifiers =
 
