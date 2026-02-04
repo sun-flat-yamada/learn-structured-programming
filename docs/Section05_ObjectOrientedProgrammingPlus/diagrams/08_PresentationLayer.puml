@@ -1,0 +1,81 @@
+@startuml Section05_PresentationLayer
+!theme plain
+
+title Section05 - Presentation Layer
+
+' Application Interface
+interface IGameRenderer {
+  +void Initialize()
+  +void Render(RenderContext context)
+  +void RenderGameOver(GameOverEventArgs gameOverArgs)
+  +void Cleanup()
+}
+
+' Presentation Implementation
+class ConsoleGameRenderer {
+  -{static} string GAME_TITLE = "LifeGame Plus - 生命の逃避行"
+  -{static} int BORDER_WIDTH = 2
+  --
+  +void Initialize()
+  +void Render(RenderContext context)
+  +void RenderGameOver(GameOverEventArgs gameOverArgs)
+  +void Cleanup()
+  -{static} void renderHeader()
+  -{static} void renderBox(string title, ConsoleColor color)
+  -void renderGameBoard(RenderContext context)
+  -{static} void renderBoardBorder(int width, char left, char middle, char right)
+  -void renderRow(int y, RenderContext context)
+  -{static} void renderEntity(Entity entity)
+  -{static} void renderLizard(Lizard lizard)
+  -{static} void renderStatus(RenderContext context)
+  -{static} void renderLizardStatus(RenderContext context)
+  -{static} void renderInstructions()
+  -{static} void renderGameOverMessage(GameOverEventArgs args)
+  -{static} void renderStatistics(int score, int ticks)
+}
+
+' External System
+class "System.Console" as Console <<external>> {
+  +{static} Encoding OutputEncoding
+  +{static} bool CursorVisible
+  +{static} void Clear()
+  +{static} void SetCursorPosition(int left, int top)
+  +{static} void Write(string value)
+  +{static} void WriteLine(string value)
+  +{static} ConsoleColor ForegroundColor
+  +{static} ConsoleColor BackgroundColor
+  +{static} void ResetColor()
+  +{static} string ReadLine()
+}
+
+' Relationships
+IGameRenderer <|.. ConsoleGameRenderer
+ConsoleGameRenderer ..> Console : uses
+ConsoleGameRenderer ..> RenderContext : uses
+ConsoleGameRenderer ..> GameOverEventArgs : uses
+ConsoleGameRenderer ..> Entity : renders
+ConsoleGameRenderer ..> Player : renders
+ConsoleGameRenderer ..> Enemy : renders
+ConsoleGameRenderer ..> Lizard : renders
+ConsoleGameRenderer ..> Tail : renders
+
+note right of ConsoleGameRenderer
+  コンソール描画の実装
+
+  機能:
+  - UTF-8エンコーディング
+  - 絵文字表示
+  - 罫線による枠線
+  - カラー表示
+  - ゲームオーバー画面
+  - 統計情報表示
+end note
+
+note bottom of Console
+  外部システム
+  .NET Framework
+
+  コンソールI/Oを提供
+end note
+
+@enduml

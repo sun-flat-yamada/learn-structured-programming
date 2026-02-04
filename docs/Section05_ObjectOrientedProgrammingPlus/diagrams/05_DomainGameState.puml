@@ -1,0 +1,134 @@
+@startuml Section05_DomainGameState
+!theme plain
+
+title Section05 - Domain Layer: GameState
+
+class GameState {
+  +event EventHandler<GameStateChangedEventArgs> StateChanged
+  +event EventHandler<GameOverEventArgs> GameEnded
+  +event EventHandler<CollisionEventArgs> CollisionDetected
+  +event EventHandler<TailEventArgs> TailEvent
+  --
+  +GameSettings Settings
+  +Player Player
+  +Enemy Enemy
+  +Lizard Lizard
+  +int Score
+  +int TickCount
+  +GamePhase Phase
+  +bool IsActive
+  +int TailsEaten
+  +bool IsPlayerAlive
+  +bool IsLizardAlive
+  --
+  +GameState(GameSettings settings, Player player, Enemy enemy, Lizard lizard)
+  +void Start()
+  +void Tick()
+  +bool CheckCollisions()
+  +void NotifyTailDropped()
+  +void QuitByPlayer()
+  +void Pause()
+  +void Resume()
+  -void endGame(GameOverReason reason, Entity? caughtEntity)
+  -void onStateChanged(GameStateChangeType changeType, object? data)
+  -void onCollisionDetected(Entity entity1, Entity entity2, bool isGameOver)
+}
+
+enum GamePhase {
+  NotStarted
+  Running
+  Paused
+  Ended
+}
+
+class GameStateChangedEventArgs {
+  +GameStateChangeType ChangeType
+  +object? Data
+  --
+  +GameStateChangedEventArgs(GameStateChangeType changeType, object? data)
+}
+
+class GameOverEventArgs {
+  +int FinalScore
+  +int SurvivalTicks
+  +GameOverReason Reason
+  +Entity? CaughtEntity
+  --
+  +GameOverEventArgs(int finalScore, int survivalTicks, GameOverReason reason, Entity? caughtEntity)
+}
+
+class CollisionEventArgs {
+  +Entity Entity1
+  +Entity Entity2
+  +Position CollisionPosition
+  +bool IsGameOver
+  --
+  +CollisionEventArgs(Entity entity1, Entity entity2, Position collisionPosition, bool isGameOver)
+}
+
+class TailEventArgs {
+  +Tail Tail
+  +Lizard Lizard
+  +TailEventType EventType
+  --
+  +TailEventArgs(Tail tail, Lizard lizard, TailEventType eventType)
+}
+
+enum GameStateChangeType {
+  Initialized
+  ScoreChanged
+  PlayerMoved
+  EnemyMoved
+  LizardMoved
+  Collision
+  PlayerCaught
+  LizardCaught
+  TailDropped
+  TailEaten
+  GameOver
+  Paused
+  Resumed
+}
+
+enum GameOverReason {
+  PlayerCaught
+  LizardCaught
+  AllCaught
+  PlayerQuit
+  TimeUp
+}
+
+enum TailEventType {
+  Dropped
+  Eaten
+}
+
+GameState --> GamePhase
+GameState --> GameSettings
+GameState --> Player
+GameState --> Enemy
+GameState --> Lizard
+
+GameState ..> GameStateChangedEventArgs : publishes
+GameState ..> GameOverEventArgs : publishes
+GameState ..> CollisionEventArgs : publishes
+GameState ..> TailEventArgs : publishes
+
+GameStateChangedEventArgs --> GameStateChangeType
+GameOverEventArgs --> GameOverReason
+GameOverEventArgs --> Entity
+CollisionEventArgs --> Entity
+CollisionEventArgs --> Position
+TailEventArgs --> Tail
+TailEventArgs --> Lizard
+TailEventArgs --> TailEventType
+
+note right of GameState
+  Observer Pattern
+  イベント駆動でゲーム状態を通知
+
+  Aggregate Root
+  ゲーム状態の中心的な管理クラス
+end note
+
+@enduml

@@ -1,0 +1,79 @@
+@startuml Section05_LayerArchitecture
+!theme plain
+skinparam packageStyle rectangle
+skinparam linetype ortho
+
+title Section05 - レイヤーアーキテクチャ
+
+package "Presentation Layer" #E1FFE8 {
+  class ConsoleGameRenderer
+}
+
+package "Application Layer" #F0FFE1 {
+  class GameLoopService
+  class GameFactory
+  interface IGameRenderer
+  interface IInputHandler
+  interface IGameClock
+}
+
+package "Domain Layer" #FFF4E1 {
+  class GameState
+  abstract Entity
+  class Player
+  class Enemy
+  class Lizard
+  class Tail
+  interface IMovementBehavior
+  class ChaseMovementBehavior
+  class FleeMovementBehavior
+  class RandomMovementBehavior
+  class GameEvents
+}
+
+package "Infrastructure Layer" #FFE1F5 {
+  class ConsoleInputHandler
+  class SystemGameClock
+}
+
+package "Core Layer" #E1F5FF {
+  class Position <<struct>>
+  enum Direction
+  class Bounds <<struct>>
+  class GameSettings
+}
+
+' Dependencies
+GameLoopService --> GameState
+GameLoopService --> IGameRenderer
+GameLoopService --> IInputHandler
+GameLoopService --> IGameClock
+
+ConsoleGameRenderer ..|> IGameRenderer
+ConsoleInputHandler ..|> IInputHandler
+SystemGameClock ..|> IGameClock
+
+GameState --> Player
+GameState --> Enemy
+GameState --> Lizard
+GameState --> GameSettings
+
+Player --|> Entity
+Enemy --|> Entity
+Lizard --|> Entity
+Tail --|> Entity
+
+Player --> IMovementBehavior
+Enemy --> IMovementBehavior
+Lizard --> IMovementBehavior
+
+ChaseMovementBehavior ..|> IMovementBehavior
+FleeMovementBehavior ..|> IMovementBehavior
+RandomMovementBehavior ..|> IMovementBehavior
+
+Entity --> Position
+Entity --> Bounds
+GameSettings --> Position
+GameSettings --> Bounds
+
+@enduml
