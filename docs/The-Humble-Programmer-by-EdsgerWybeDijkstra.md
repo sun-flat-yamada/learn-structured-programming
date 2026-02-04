@@ -1,11 +1,10 @@
-# エドガー・W. ダイクストラ チューリング賞講演
-# "The Humble Programmer"（謙虚なるプログラマ）
+# エドガー・W. ダイクストラ チューリング賞講演 "The Humble Programmer"（謙虚なるプログラマ）
 
 - **講演者**: Edsger W. Dijkstra
 - **受賞年**: 1972年（ACM チューリング賞 受賞講演）
 - **原典**: EWD340
-- **原文URL**: https://www.cs.utexas.edu/~EWD/transcriptions/EWD03xx/EWD340.html
-- **翻訳URL**: https://www.unixuser.org/~euske/doc/dijkstra-ja/thehumbleprogrammer.html
+- **原文URL**: <https://www.cs.utexas.edu/~EWD/transcriptions/EWD03xx/EWD340.html>
+- **翻訳URL**: <https://www.unixuser.org/~euske/doc/dijkstra-ja/thehumbleprogrammer.html>
 
 ---
 
@@ -31,7 +30,7 @@
 ### 講演の構成（時系列）
 
 | セクション | 内容 |
-|-----------|------|
+| ----------- | ------ |
 | 導入 | プログラミング職業の誕生と社会的認知の遅れ |
 | 歴史的分析 | 初期コンピュータ時代の問題と誤解 |
 | 危機の分析 | ソフトウェア危機の原因と背景 |
@@ -109,6 +108,8 @@
 >
 > **日本語訳**: 「率直に言えば：マシンが存在しなかったとき、プログラミングは全く問題ではなかった。弱いコンピュータが少しあったとき、プログラミングは軽い問題になった。そして巨大なコンピュータを持つ今、プログラミングは同様に巨大な問題になった。」
 
+:
+
 > **原文**: "In this sense the electronic industry has not solved a single problem, it has only created them, it has created the problem of using its products."
 >
 > **日本語訳**: 「この意味で、電子産業は一つの問題も解決しておらず、問題を創出しただけだ。自社製品を使用するという問題を創出したのだ。」
@@ -178,6 +179,7 @@
 ### 5.2 FORTRAN（1950年代後半〜）
 
 **評価**:
+
 - 当時としては大胆なプロジェクトであり、責任者たちは賞賛に値する
 - 10年以上の使用後に明らかになった欠点を責めるのは不公平
 
@@ -187,9 +189,13 @@
 >
 > **日本語訳**: 「振り返れば、FORTRANは成功したコーディング技法と評価しなければならないが、概念化のための効果的な補助はほとんどない」
 
+:
+
 > **原文**: "The sooner we can forget that FORTRAN has ever existed, the better, for as a vehicle of thought it is no longer adequate: it wastes our brainpower, is too risky and therefore too expensive to use."
 >
 > **日本語訳**: 「FORTRANが存在したことを忘れれば忘れるほど良い。思考の手段としてもはや適切ではない：脳力を浪費し、リスクが高すぎ、そのため使用するには高価すぎる。」
+
+:
 
 > **原文**: "FORTRAN's tragic fate has been its wide acceptance, mentally chaining thousands and thousands of programmers to our past mistakes."
 >
@@ -198,6 +204,7 @@
 ### 5.3 LISP
 
 **評価**:
+
 - 完全に異なる性質の魅力的な試み
 - 非常に基本的な原則に基づき、驚くべき安定性を示した
 - 最も洗練されたコンピュータ応用の多くを担ってきた
@@ -211,7 +218,8 @@
 ### 5.4 ALGOL 60
 
 **評価**:
-- **実装非依存**でプログラミング言語を定義しようとした真摯な努力の成果
+
+- **実装非依存**でプログラミング言語を定義しようとした真摳な努力の成果
 - **BNF（Backus-Naur Form）** の力を見事に実証
 - ピーター・ナウアによる注意深い英語表現の力を示した
 
@@ -222,6 +230,7 @@
 > **日本語訳**: 「これほど短い文書でこれほど深い影響を計算機界に与えたものは非常に少ないと言って良いと思う。」
 
 **批判**:
+
 - BNFの強力さゆえに、過度に複雑で体系的でない構文が数ページに詰め込まれた
 - パラメータ機構は組み合わせの自由度が高すぎ、使用には強い規律が必要
 - 実装が高価で使用が危険
@@ -234,9 +243,13 @@
 >
 > **日本語訳**: 「最後に、快い話題ではないが、PL/1について言及しなければならない。その定義文書は恐ろしいほどの大きさと複雑さを持つプログラミング言語だ。」
 
+:
+
 > **原文**: "Using PL/1 must be like flying a plane with 7000 buttons, switches and handles to manipulate in the cockpit."
 >
 > **日本語訳**: 「PL/1を使うのは、コックピットに7000個のボタン、スイッチ、レバーがある飛行機を操縦するようなものに違いない。」
+
+:
 
 > **原文**: "And if I have to describe the influence PL/1 can have on its users, the closest metaphor that comes to my mind is that of a drug."
 >
@@ -247,6 +260,8 @@
 > **原文**: "But within a one-hour lecture in praise of PL/1, he managed to ask for the addition of about fifty new 'features', little supposing that the main source of his problems could very well be that it contained already far too many 'features'."
 >
 > **日本語訳**: 「PL/1を称賛する1時間の講演の中で、彼は約50の新しい『機能』の追加を求めた。問題の主な原因がすでに機能が多すぎることかもしれないとは思いもしなかった。」
+
+:
 
 > **原文**: "The speaker displayed all the depressing symptoms of addiction, reduced as he was to the state of mental stagnation in which he could only ask for more, more, more..."
 >
@@ -274,6 +289,8 @@
 >
 > **日本語訳**: 「本当に信頼性の高いソフトウェアを望む者は、最初から大部分のバグを避ける手段を見つけなければならないことを発見するだろう。その結果、プログラミングプロセスはより安くなる。」
 
+:
+
 > **原文**: "If you want more effective programmers, you will discover that they should not waste their time debugging, they should not introduce the bugs to start with."
 >
 > **日本語訳**: 「より効果的なプログラマが欲しければ、彼らはデバッグに時間を浪費すべきではなく、最初からバグを導入すべきではないことを発見するだろう。」
@@ -283,7 +300,7 @@
 革命が起こるための3つの必要条件：
 
 | 条件 | 内容 | 状況 |
-|------|------|------|
+| ------ | ------ | ------ |
 | 1. 認識 | 変化の必要性が広く認識されること | ✓ 1968年ガルミッシュ会議で認められた |
 | 2. 経済的必要性 | 十分に強い経済的動機があること | ✓ ハードウェア価格が10分の1になる見込み |
 | 3. 技術的実現可能性 | 技術的に可能であること | 次節で6つの論拠を提示 |
@@ -299,6 +316,7 @@
 > **日本語訳**: 「論拠1は、プログラマが知的に管理可能なプログラムのみを考慮すればよいので、選択肢は遥かに扱いやすくなるということだ。」
 
 **発見されたルール**:
+
 - **第1種**: 機械的に強制可能（例：goto文の排除、複数出力パラメータを持つ手続きの排除）
 - **第2種**: プログラマの規律として要求される（例：ループの終了証明、不変量の明示）
 
@@ -321,6 +339,8 @@
 > **原文**: "But one should not first make the program and then prove its correctness, because then the requirement of providing the proof would only increase the poor programmer's burden. On the contrary: the programmer should let correctness proof and program grow hand in hand."
 >
 > **日本語訳**: 「しかし、プログラムを先に作って正当性を証明するべきではない。そうすると証明を提供する要件が不幸なプログラマの負担を増やすだけだからだ。そうではなく：プログラマは正当性証明とプログラムを手を取り合って成長させるべきだ。」
+
+:
 
 > **原文**: "If one first asks oneself what the structure of a convincing proof would be and, having found this, then constructs a program satisfying this proof's requirements, then these correctness concerns turn out to be a very effective heuristic guidance."
 >
@@ -367,6 +387,8 @@
 >
 > **日本語訳**: 「あるプログラマが別のプログラマの机に1行のプログラムを置き、誇らしそうにそれが何をするかを話し、『これより少ない記号でコーディングできるか？』と問う——まるでこれに概念的な意味があるかのように！——あるいは『何をするか当ててみろ！』と言う。」
 
+:
+
 > **原文**: "From this observation we must conclude that this language as a tool is an open invitation for clever tricks; and while exactly this may be the explanation for some of its appeal, viz. to those who like to show how clever they are, I am sorry, but I must regard this as one of the most damning things that can be said about a programming language."
 >
 > **日本語訳**: 「この観察から、この言語はツールとして巧妙なトリックへの公然たる招待状だと結論しなければならない。まさにそれがその魅力の一部の説明かもしれないが——自分がいかに賢いかを見せたい人々には——申し訳ないが、これはプログラミング言語について言える最も批判的なことの一つだと見なさなければならない。」
@@ -376,6 +398,8 @@
 > **原文**: "I see a great future for very systematic and very modest programming languages."
 >
 > **日本語訳**: 「非常に体系的で非常に控えめなプログラミング言語に大きな将来を見ている。」
+
+:
 
 > **原文**: "When I say 'modest', I mean that, for instance, not only ALGOL 60's 'for clause', but even FORTRAN's 'DO loop' may find themselves thrown out as being too baroque."
 >
@@ -406,6 +430,7 @@
 > **日本語訳**: 「階層システムは、あるレベルで分割不可能な実体と見なされるものが、より詳細な次の下位レベルでは複合オブジェクトと見なされるという性質を持つようだ」
 
 具体例：
+
 - 壁 → レンガ → 結晶 → 分子 ...
 
 ### 8.2 コンピュータの特異性
@@ -413,6 +438,8 @@
 > **原文**: "In computer programming our basic building block has an associated time grain of less than a microsecond, but our program may take hours of computation time."
 >
 > **日本語訳**: 「コンピュータプログラミングでは、基本構成要素の時間粒度はマイクロ秒未満だが、プログラムの実行には何時間もかかることがある。」
+
+:
 
 > **原文**: "I do not know of any other technology covering a ratio of 10^10 or more: the computer, by virtue of its fantastic speed, seems to be the first to provide us with an environment where highly hierarchical artefacts are both possible and necessary."
 >
@@ -425,6 +452,7 @@
 > **日本語訳**: 「プログラミング課題との対峰というこの挑戦は非常にユニークであり、この新しい経験は我々自身について多くを教えてくれる。」
 
 期待される効果：
+
 - 設計と創造のプロセスへの理解を深める
 - 思考を組織化する作業に対するより良い制御を与える
 
@@ -435,6 +463,7 @@
 ### 9.1 革命への障害
 
 予想される保守的勢力：
+
 - 大企業よりも、**教育機関**や**保守的なユーザーグループ**
 - 古いプログラムを書き直す価値がないと考える人々
 - 大規模アプリケーション（例：高エネルギー物理学）による中央計算施設の選択への影響
@@ -451,6 +480,8 @@
 >
 > **日本語訳**: 「自動計算機は今や四半世紀の歴史を持つ。道具としての能力において社会に大きな影響を与えてきたが、その能力における影響は、人類の文化史において前例のない知的挑戦としての、はるかに深い影響に比べれば、文化の表面に立つさざ波に過ぎない。」
 
+:
+
 > **原文**: "We shall do a much better programming job, provided that we approach the task with a full appreciation of its tremendous difficulty, provided that we stick to modest and elegant programming languages, provided that we respect the intrinsic limitations of the human mind and approach the task as Very Humble Programmers."
 >
 > **日本語訳**: 「我々はプログラミング課題の途方もない困難さを十分に認識し、控えめで優雅なプログラミング言語にこだわり、人間の心の本質的な限界を尊重し、**非常に謙虚なプログラマ（Very Humble Programmers）** として課題に取り組むなら、はるかに良いプログラミングの仕事ができるだろう。」
@@ -462,7 +493,7 @@
 ### 歴史的教訓
 
 | # | メッセージ |
-|---|-----------|
+| --- | ----------- |
 | 1 | プログラミングは職業として認知されるのに長い時間がかかった |
 | 2 | 初期の「パズル指向」「最適化至上主義」は誤りだった |
 | 3 | より強力なマシンは問題を解決せず、より大きな問題を生み出した |
@@ -470,7 +501,7 @@
 ### ソフトウェア危機について
 
 | # | メッセージ |
-|---|-----------|
+| --- | ----------- |
 | 4 | ソフトウェア危機は1968年のガルミッシュ会議で公式に認められた |
 | 5 | 危機の主因はマシンの能力向上に伴う野心の拡大 |
 | 6 | 第三世代コンピュータの設計は計算機科学の進歩を10年後退させた |
@@ -478,7 +509,7 @@
 ### プログラミング言語について
 
 | # | メッセージ |
-|---|-----------|
+| --- | ----------- |
 | 7 | クローズドサブルーチンはソフトウェア最大の発明の一つ |
 | 8 | FORTRANは忘れられるべき過去の遺物 |
 | 9 | LISPは解放をもたらす知的ツール |
@@ -488,7 +519,7 @@
 ### プログラミング方法論について
 
 | # | メッセージ |
-|---|-----------|
+| --- | ----------- |
 | 12 | テストはバグの存在を示せるが、不在は示せない |
 | 13 | 正当性証明とプログラムを同時に成長させるべき |
 | 14 | 抽象化の目的は曖昧さではなく、新しい精密さの創造 |
@@ -497,7 +528,7 @@
 ### プログラマの姿勢について
 
 | # | メッセージ |
-|---|-----------|
+| --- | ----------- |
 | 16 | 有能なプログラマは自分の知的限界を認識している |
 | 17 | 巧妙なトリックはペストのように避けるべき |
 | 18 | 謙虚さをもってプログラミングに取り組むべき |
@@ -506,7 +537,7 @@
 ### 将来への展望
 
 | # | メッセージ |
-|---|-----------|
+| --- | ----------- |
 | 20 | より良いツールができても、プログラミングは困難であり続ける |
 | 21 | 階層的分解が複雑なシステムへの唯一の道 |
 | 22 | コンピュータは人類史上前例のない知的挑戦を提供している |
@@ -578,7 +609,7 @@
 
 **パラダイムの本質**: 人の持つ抽象化という能力で複数の構造パターンを見いだせる。
 
-#### 講演における関連箇所
+#### デザインパターン：講演における関連箇所
 
 **抽象化パターンの発見**:
 > **原文**: "Enough is now known about these patterns of abstraction that you could devote a lecture to about each of them."
@@ -595,7 +626,7 @@
 >
 > **日本語訳**: 「クローズドサブルーチンをソフトウェア最大の発明の一つとして認識すべきだ。それは3世代のコンピュータを生き延び、さらに数世代を生き延びるだろう。なぜなら、それは我々の基本的な抽象化パターンの一つの実装を提供するからだ。」
 
-#### 現代への示唆
+#### デザインパターン：現代への示唆
 
 ダイクストラは「抽象化パターン」という概念を明確に述べ、それらが共通知識として普及すれば開発効率が劇的に向上すると予見した。この考えは、1994年のGoF（Gang of Four）による「デザインパターン」の体系化へと直接つながる。パターンを「発明」ではなく「発見」として捉え、共通言語として普及させるという発想は、まさにダイクストラが示唆した方向性である。
 
@@ -605,7 +636,7 @@
 
 **パラダイムの本質**: プログラムを作ってからテストでバグがないことを証明するのは悪魔の証明であり、テストを作りながらプログラミングすべき。
 
-#### 講演における関連箇所
+#### TDD：講演における関連箇所
 
 **テストの限界（悪魔の証明）**:
 > **原文**: "program testing can be a very effective way to show the presence of bugs, but is hopelessly inadequate for showing their absence."
@@ -627,7 +658,7 @@
 >
 > **日本語訳**: 「まず説得力のある証明の構造がどうあるべきかを自問し、それを見つけてから、その証明の要件を満たすプログラムを構築すれば、正当性への関心は非常に効果的な発見的指針となる。」
 
-#### 現代への示唆
+#### TDD：現代への示唆
 
 ダイクストラの「正当性証明とプログラムを手を取り合って成長させる」という主張は、ケント・ベックが1990年代後半に体系化したTDD（テスト駆動開発）の理論的先駆けである。「まず証明（テスト）の構造を考え、それを満たすプログラムを書く」というアプローチは、TDDの「Red-Green-Refactor」サイクルそのものである。事後的なテストではなく、テストを設計の指針として先行させる発想が、すでに1972年に明確に述べられていた。
 
@@ -637,7 +668,7 @@
 
 **パラダイムの本質**: テストを作る過程で業務の構造を見つけ、仕様として定義していくのが良い。
 
-#### 講演における関連箇所
+#### アジャイル：講演における関連箇所
 
 **発見的指針としての正当性**:
 > **原文**: "these correctness concerns turn out to be a very effective heuristic guidance."
@@ -659,7 +690,7 @@
 >
 > **日本語訳**: 「より効果的なプログラマが欲しければ、彼らはデバッグに時間を浪費すべきではなく、最初からバグを導入すべきではないことを発見するだろう。」
 
-#### 現代への示唆
+#### アジャイル：現代への示唆
 
 ダイクストラの「正当性への関心が発見的指針となる」という主張は、アジャイル開発における「テストを通じて仕様を発見する」プラクティスの先駆けである。テストを書く過程で業務の本質的な構造が明らかになり、それが仕様として定義されていくという考え方は、TDDとBDD（振る舞い駆動開発）を通じてアジャイル手法の中核となった。
 
@@ -671,7 +702,7 @@
 
 **パラダイムの本質**: 業務ドメインの専門家と開発者が共通言語（ユビキタス言語）を構築し、ドメインモデルを中心にソフトウェアを設計する。モデルはドメインの本質を捉え、コードと一体化する。
 
-#### 講演における関連箇所
+#### DDD：講演における関連箇所
 
 **意味レベルの創造**:
 > **原文**: "the purpose of abstracting is not to be vague, but to create a new semantic level in which one can be absolutely precise."
@@ -698,7 +729,7 @@
 >
 > **日本語訳**: 「階層システムは、あるレベルで分割不可能な実体と見なされるものが、より詳細な次の下位レベルでは複合オブジェクトと見なされるという性質を持つようだ」
 
-#### 現代への示唆
+#### DDD：現代への示唆
 
 ダイクストラの「新しい意味レベル（semantic level）の創造」という主張は、DDDにおける**ユビキタス言語**と**ドメインモデル**の概念を先取りしている。エリック・エヴァンスが2003年に体系化したDDDは、業務ドメインの専門家と開発者が共通の語彙（言語）を構築し、その言語でモデルを表現することを核心とする。
 
@@ -711,7 +742,7 @@
 ### パラダイム対応表（サマリ）
 
 | パラダイム | ダイクストラの主張 | 講演での核心的引用 |
-|-----------|-------------------|-------------------|
+| ----------- | ------------------- | ------------------- |
 | **モデリング** | 抽象化は新しい精密さの創造 | "the purpose of abstracting is not to be vague, but to create a new semantic level in which one can be absolutely precise" |
 | **デザインパターン** | 抽象化パターンの共有で効率劇的向上 | "these patterns of abstraction... could have taken a few minutes instead of a few years" |
 | **TDD** | 証明とプログラムの同時成長 | "the programmer should let correctness proof and program grow hand in hand" |
@@ -739,4 +770,4 @@
 - **原典**: EWD340
 - **発表**: 1972年 ACM チューリング賞講演
 - **出版**: Communications of the ACM, Vol. 15, No. 10, October 1972
-- **アーカイブ**: https://www.cs.utexas.edu/~EWD/
+- **アーカイブ**: <https://www.cs.utexas.edu/~EWD/>

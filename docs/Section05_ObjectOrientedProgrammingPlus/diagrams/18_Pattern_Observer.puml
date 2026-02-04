@@ -1,0 +1,105 @@
+@startuml Section05_Pattern_Observer
+!theme plain
+
+title Design Pattern: Observer Pattern (オブザーバーパターン)
+
+' Subject
+class GameState <<Subject>> {
+  +event EventHandler<GameStateChangedEventArgs> StateChanged
+  +event EventHandler<GameOverEventArgs> GameEnded
+  +event EventHandler<CollisionEventArgs> CollisionDetected
+  +event EventHandler<TailEventArgs> TailEvent
+  --
+  +void Start()
+  +void Tick()
+  +bool CheckCollisions()
+  -void onStateChanged(GameStateChangeType type, object? data)
+  -void onCollisionDetected(Entity e1, Entity e2, bool isGameOver)
+}
+
+' Event Args
+class GameStateChangedEventArgs <<EventArgs>> {
+  +GameStateChangeType ChangeType
+  +object? Data
+}
+
+class GameOverEventArgs <<EventArgs>> {
+  +int FinalScore
+  +int SurvivalTicks
+  +GameOverReason Reason
+}
+
+class CollisionEventArgs <<EventArgs>> {
+  +Entity Entity1
+  +Entity Entity2
+  +Position CollisionPosition
+}
+
+class TailEventArgs <<EventArgs>> {
+  +Tail Tail
+  +Lizard Lizard
+  +TailEventType EventType
+}
+
+' Observers
+class GameLoopService <<Observer>> {
+  -GameState _gameState
+  --
+  -void onGameEnded(object? sender, GameOverEventArgs e)
+}
+
+class ConsoleGameRenderer <<Observer>> {
+  +void OnCollisionDetected(object? sender, CollisionEventArgs e)
+  +void OnTailEvent(object? sender, TailEventArgs e)
+}
+
+' Relationships
+GameState ..> GameStateChangedEventArgs : publishes
+GameState ..> GameOverEventArgs : publishes
+GameState ..> CollisionEventArgs : publishes
+GameState ..> TailEventArgs : publishes
+
+GameState --> GameLoopService : notifies
+GameState --> ConsoleGameRenderer : notifies
+
+note top of GameState
+  Observer Pattern
+
+  目的:
+  オブジェクトの状態変化を
+  他のオブジェクトに通知する
+
+  メリット:
+  - 疎結合なコンポーネント間通信
+  - イベント駆動アーキテクチャの実現
+  - 複数のサブスクライバーをサポート
+end note
+
+note right of GameLoopService
+  Observer (Subscriber)
+
+  購読:
+  _gameState.GameEnded += onGameEnded;
+
+  通知受信:
+  private void onGameEnded(
+    object? sender,
+    GameOverEventArgs e)
+  {
+    _gameOverArgs = e;
+  }
+end note
+
+note bottom of GameState
+  Subject (Publisher)
+
+  イベント発行:
+  StateChanged?.Invoke(
+    this,
+    new GameStateChangedEventArgs(
+      changeType, data));
+
+  複数のObserverに通知可能
+end note
+
+@enduml

@@ -1,0 +1,249 @@
+@startuml TurtleVsCrocodile_ConceptualModel
+!theme plain
+
+title カメとワニの追いかけっこゲーム - 概念モデル（クラス図）
+
+' ============================================
+' Core Layer - 基本値オブジェクト
+' ============================================
+package "Core（基盤層）" #EEEEEE {
+
+  class Position <<Value Object>> {
+    +X : int
+    +Y : int
+    --
+    +Move(direction) : Position
+    +DistanceTo(other) : int
+    +DirectionTo(other) : Direction
+    +Equals(other) : bool
+  }
+
+  enum Direction <<Enumeration>> {
+    Up
+    Down
+    Left
+    Right
+    None
+  }
+
+  class Bounds <<Value Object>> {
+    +Width : int
+    +Height : int
+    --
+    +Contains(position) : bool
+    +Clamp(position) : Position
+  }
+
+}
+
+' ============================================
+' Domain Layer - ドメインモデル
+' ============================================
+package "Domain（ドメイン層）" #E8F4E8 {
+
+  ' --- Entities ---
+  package "Entities（エンティティ）" {
+
+    abstract class Animal <<Entity>> {
+      #position : Position
+      #isAlive : bool
+      --
+      +Position : Position {readonly}
+      +IsAlive : bool {readonly}
+      +{abstract} Symbol : char
+      +{abstract} Emoji : string
+      --
+      #Animal(initialPosition, bounds)
+      +Move(direction) : bool
+      +{abstract} DecideNextMove(context) : Direction
+      +Die() : void
+    }
+
+    class Turtle <<Entity>> {
+      -fleeRange : int
+      -movementBehavior : IMovementBehavior
+      --
+      +Symbol : char = 'T'
+      +Emoji : string = "🐢"
+      +FleeRange : int {readonly}
+      --
+      +Turtle(position, bounds, fleeRange)
+      +DecideNextMove(context) : Direction
+      -isEnemyNearby(enemyPosition) : bool
+      -getFleeDirection(enemyPosition) : Direction
+      -getRandomDirection() : Direction
+    }
+
+    class Crocodile <<Entity>> {
+      -target : Turtle
+      -movementBehavior : IMovementBehavior
+      --
+      +Symbol : char = 'C'
+      +Emoji : string = "🐊"
+      +Target : Turtle {readonly}
+      --
+      +Crocodile(position, bounds, target)
+      +DecideNextMove(context) : Direction
+      +Eat(prey) : void
+      -getChaseDirection(targetPosition) : Direction
+    }
+
+    Animal <|-- Turtle
+    Animal <|-- Crocodile
+  }
+
+  ' --- Behaviors ---
+  package "Behaviors（振る舞い）" {
+
+    interface IMovementBehavior <<Strategy>> {
+      +DetermineDirection(current, target) : Direction
+    }
+
+    class RandomMovement {
+      +DetermineDirection(current, target) : Direction
+    }
+
+    class FleeMovement {
+      +DetermineDirection(current, target) : Direction
+    }
+
+    class ChaseMovement {
+      +DetermineDirection(current, target) : Direction
+    }
+
+    IMovementBehavior <|.. RandomMovement
+    IMovementBehavior <|.. FleeMovement
+    IMovementBehavior <|.. ChaseMovement
+  }
+
+  ' --- Game Rules ---
+  package "Rules（ルール）" {
+
+    class GameRule <<Domain Service>> {
+      -catchDistance : int
+      --
+      +CatchDistance : int {readonly}
+      --
+      +IsCaught(turtle, crocodile) : bool
+      +IsGameOver(state) : bool
+      +GetWinner(state) : Animal?
+    }
+
+    enum GamePhase <<Enumeration>> {
+      Ready
+      Playing
+      GameOver
+    }
+  }
+
+  ' --- Game State ---
+  class GameState <<Aggregate Root>> {
+    -turtle : Turtle
+    -crocodile : Crocodile
+    -field : GameField
+    -turnCount : int
+    -phase : GamePhase
+    --
+    +Turtle : Turtle {readonly}
+    +Crocodile : Crocodile {readonly}
+    +Field : GameField {readonly}
+    +TurnCount : int {readonly}
+    +Phase : GamePhase {readonly}
+    --
+    +GameState(field, turtle, crocodile)
+    +NextTurn() : void
+    +EndGame() : void
+  }
+
+  class GameField <<Entity>> {
+    -width : int
+    -height : int
+    -bounds : Bounds
+    --
+    +Width : int {readonly}
+    +Height : int {readonly}
+    +Bounds : Bounds {readonly}
+    --
+    +GameField(width, height)
+    +IsValidPosition(position) : bool
+    +GetRandomPosition() : Position
+  }
+
+}
+
+' ============================================
+' 関連（Relationships）
+' ============================================
+
+' Core relationships
+Animal --> Position : has current
+Animal --> Bounds : constrained by
+Position --> Direction : moves by
+
+' Entity relationships
+Crocodile --> Turtle : 追跡する\n(targets)
+Turtle ..> Crocodile : 逃げる\n(flees from)
+
+' Behavior relationships
+Turtle --> IMovementBehavior : uses
+Crocodile --> IMovementBehavior : uses
+
+' Game State relationships
+GameState --> Turtle : contains
+GameState --> Crocodile : contains
+GameState --> GameField : has
+GameState --> GamePhase : current state
+GameField --> Bounds : defines
+
+' Rule relationships
+GameRule ..> GameState : evaluates
+GameRule ..> Turtle : checks
+GameRule ..> Crocodile : checks
+
+' ============================================
+' Notes
+' ============================================
+
+note top of Animal
+  《抽象基底クラス》
+  すべての動物の共通属性と
+  振る舞いを定義
+end note
+
+note right of Turtle
+  【カメの振る舞い】
+  ・ワニが近くにいない → ランダム移動
+  ・ワニが近くにいる → 反対方向に逃走
+
+  fleeRange: 逃走判定距離
+end note
+
+note right of Crocodile
+  【ワニの振る舞い】
+  ・常にカメを追跡
+  ・カメに追いついたら捕食
+
+  target: 追跡対象のカメ
+end note
+
+note bottom of GameRule
+  【ゲームルール】
+  ・ワニがカメに追いつく = 捕食
+  ・捕食 = ゲームオーバー
+
+  catchDistance: 捕食判定距離
+end note
+
+note right of IMovementBehavior
+  《Strategy Pattern》
+  移動アルゴリズムを
+  カプセル化して交換可能に
+end note
+
+note bottom of GameState
+  《Aggregate Root》
+  ゲーム全体の状態を管理
+  ターンの進行を制御
+end note
+
+@enduml

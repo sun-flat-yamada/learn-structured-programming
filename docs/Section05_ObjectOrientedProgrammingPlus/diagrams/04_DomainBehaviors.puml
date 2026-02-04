@@ -1,0 +1,80 @@
+@startuml Section05_DomainBehaviors
+!theme plain
+
+title Section05 - Domain Layer: Behaviors (Strategy Pattern)
+
+interface IMovementBehavior {
+  +Direction DetermineDirection(Position currentPosition, Position targetPosition)
+}
+
+class ChaseMovementBehavior {
+  +Direction DetermineDirection(Position currentPosition, Position targetPosition)
+}
+
+class FleeMovementBehavior {
+  +Direction DetermineDirection(Position currentPosition, Position targetPosition)
+}
+
+class RandomMovementBehavior {
+  -Random _random
+  --
+  +RandomMovementBehavior(Random? random)
+  +Direction DetermineDirection(Position currentPosition, Position targetPosition)
+}
+
+IMovementBehavior <|.. ChaseMovementBehavior
+IMovementBehavior <|.. FleeMovementBehavior
+IMovementBehavior <|.. RandomMovementBehavior
+
+abstract class Entity {
+  +bool TryMove(Direction direction)
+}
+
+class Player {
+  -IMovementBehavior _defaultMovement
+  +void PerformDefaultMove()
+}
+
+class Enemy {
+  -IMovementBehavior _movementBehavior
+  +void MoveTowards(Position target)
+}
+
+class Lizard {
+  -IMovementBehavior _randomMovement
+  -IMovementBehavior _fleeMovement
+  +void Act(Position enemyPosition)
+}
+
+Entity <|-- Player
+Entity <|-- Enemy
+Entity <|-- Lizard
+
+Player --> IMovementBehavior : uses
+Enemy --> IMovementBehavior : uses
+Lizard --> IMovementBehavior : uses (2 strategies)
+
+note top of IMovementBehavior
+  Strategy Pattern
+  移動アルゴリズムをカプセル化
+  実行時に戦略を切り替え可能
+end note
+
+note right of ChaseMovementBehavior
+  追跡移動戦略
+  ターゲットに向かって移動
+  距離差が大きい軸を優先
+end note
+
+note right of FleeMovementBehavior
+  逃走移動戦略
+  ターゲットから逃げる
+  X軸優先で反対方向へ
+end note
+
+note right of RandomMovementBehavior
+  ランダム移動戦略
+  4方向のいずれかに移動
+end note
+
+@enduml

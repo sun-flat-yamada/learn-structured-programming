@@ -1,0 +1,177 @@
+@startuml ConceptualClassDiagram
+'==============================================================================
+' Turtle vs Crocodile Game - Conceptual Class Diagram (Domain Model)
+'
+' UML 2.5 Compliant Conceptual Model
+' Following Robert C. Martin's Clean Architecture Principles
+'
+' Key Design Decisions:
+' - Dependencies point toward stability (Stable Dependencies Principle)
+' - Abstractions do not depend on details (Dependency Inversion Principle)
+' - High cohesion within domain concepts
+' - Low coupling between aggregates
+'==============================================================================
+
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+skinparam class {
+    BackgroundColor<<Value>> #FFFACD
+    BackgroundColor<<Entity>> #E6F3FF
+    BackgroundColor<<Aggregate>> #FFE6E6
+    BorderColor Black
+    ArrowColor #333333
+}
+skinparam note {
+    BackgroundColor #FFFFCC
+    BorderColor #999999
+}
+
+title Turtle vs Crocodile Game\nConceptual Class Diagram (Domain Model)
+
+'==============================================================================
+' VALUE OBJECTS
+' Immutable, identity-less, equality by value
+'==============================================================================
+package "Value Objects" <<Rectangle>> {
+
+    class Position <<Value Object>> {
+        --
+        x : Integer {frozen}
+        y : Integer {frozen}
+    }
+    note right of Position
+        Immutable coordinate pair.
+        Two Positions are equal
+        iff x₁=x₂ ∧ y₁=y₂
+    end note
+
+    class Direction <<Value Object>> {
+        --
+        deltaX : Integer {frozen}
+        deltaY : Integer {frozen}
+    }
+    note right of Direction
+        Represents movement vector.
+        UP    = (0, -1)
+        DOWN  = (0, +1)
+        LEFT  = (-1, 0)
+        RIGHT = (+1, 0)
+    end note
+
+    class Bounds <<Value Object>> {
+        --
+        width : Integer {frozen}
+        height : Integer {frozen}
+    }
+
+}
+
+'==============================================================================
+' ENTITIES
+' Identity-based, mutable state, lifecycle
+'==============================================================================
+package "Entities" <<Rectangle>> {
+
+    abstract class Character <<Entity>> {
+        --
+        # position : Position
+        --
+    }
+    note top of Character
+        Abstract base for all
+        game characters.
+        Identity by instance.
+    end note
+
+    class Turtle <<Entity>> {
+        --
+    }
+    note bottom of Turtle
+        Player character.
+        Moves by user input
+        or randomly.
+    end note
+
+    class Crocodile <<Entity>> {
+        --
+    }
+    note bottom of Crocodile
+        Antagonist.
+        Pursues Turtle using
+        chase algorithm.
+    end note
+
+}
+
+'==============================================================================
+' AGGREGATE ROOT
+' Consistency boundary, transactional unit
+'==============================================================================
+package "Aggregate" <<Rectangle>> {
+
+    class Game <<Aggregate Root>> {
+        --
+        - score : Integer
+        - isActive : Boolean
+        --
+    }
+    note top of Game
+        Aggregate Root.
+        Invariant: Collision ⟹ isActive = false
+        Single point of entry for
+        all game state mutations.
+    end note
+
+}
+
+'==============================================================================
+' RELATIONSHIPS
+'==============================================================================
+
+' Generalization (Inheritance)
+' UML: Hollow triangle arrow pointing to supertype
+Character <|-- Turtle
+Character <|-- Crocodile
+
+' Composition (Strong ownership, lifecycle dependency)
+' UML: Filled diamond at the whole, multiplicity at parts
+Game "1" *-- "1" Turtle : player
+Game "1" *-- "1" Crocodile : enemy
+Game "1" *-- "1" Bounds : field
+
+' Composition (Character owns its Position)
+Character "1" *-- "1" Position : currentPosition
+
+' Dependency (Usage relationship)
+' UML: Dashed arrow pointing to used element
+Turtle ..> Direction : <<use>>\nmoveDirection
+Crocodile ..> Position : <<use>>\ntargetPosition
+
+' Association (Knows-about relationship)
+' UML: Solid line with role names and multiplicity
+Crocodile "1" --> "1" Turtle : pursues >
+
+'==============================================================================
+' LEGEND
+'==============================================================================
+legend right
+    |= Symbol |= Meaning |
+    | ◆───── | Composition (lifecycle dependency) |
+    | ◇───── | Aggregation (shared ownership) |
+    | ────── | Association (knows-about) |
+    | - - - -> | Dependency (uses) |
+    | ◁───── | Generalization (is-a) |
+    |<size:10>«Value Object»</size>| Immutable, no identity |
+    |<size:10>«Entity»</size>| Mutable, identity-based |
+    |<size:10>«Aggregate Root»</size>| Consistency boundary |
+endlegend
+
+footer
+    Robert C. Martin's Principles Applied:
+    • SRP: Each class has one reason to change
+    • OCP: Character is open for extension (Turtle, Crocodile)
+    • DIP: High-level Game depends on abstractions
+    • Stable Dependencies: All arrows point toward stable abstractions
+end footer
+
+@enduml

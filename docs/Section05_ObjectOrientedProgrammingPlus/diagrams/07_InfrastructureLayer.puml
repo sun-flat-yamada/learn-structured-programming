@@ -1,0 +1,72 @@
+@startuml Section05_InfrastructureLayer
+!theme plain
+
+title Section05 - Infrastructure Layer
+
+' Application Interfaces
+interface IInputHandler {
+  +InputResult ProcessInput(Player player)
+}
+
+interface IGameClock {
+  +void Wait(int milliseconds)
+}
+
+' Infrastructure Implementations
+class ConsoleInputHandler {
+  +InputResult ProcessInput(Player player)
+  -{static} bool tryGetKey(out ConsoleKeyInfo keyInfo)
+  -{static} InputResult processKeyInput(ConsoleKeyInfo keyInfo, Player player)
+}
+
+class SystemGameClock {
+  +void Wait(int milliseconds)
+}
+
+' External Systems
+class "System.Console" as Console <<external>> {
+  +{static} bool KeyAvailable
+  +{static} ConsoleKeyInfo ReadKey(bool intercept)
+}
+
+class "System.Threading.Thread" as Thread <<external>> {
+  +{static} void Sleep(int milliseconds)
+}
+
+' Relationships
+IInputHandler <|.. ConsoleInputHandler
+IGameClock <|.. SystemGameClock
+
+ConsoleInputHandler ..> Console : uses
+SystemGameClock ..> Thread : uses
+
+note right of ConsoleInputHandler
+  コンソール入力の実装
+
+  サポートキー:
+  - W/↑: 上
+  - S/↓: 下
+  - A/←: 左
+  - D/→: 右
+  - P: 一時停止
+  - Q/Esc: 終了
+end note
+
+note right of SystemGameClock
+  システムクロックの実装
+
+  Thread.Sleepを使用して
+  実際の待機を行う
+end note
+
+note top of Console
+  外部システム
+  .NET Framework
+end note
+
+note top of Thread
+  外部システム
+  .NET Framework
+end note
+
+@enduml

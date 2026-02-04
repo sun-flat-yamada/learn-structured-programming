@@ -1,0 +1,93 @@
+@startuml Section05_Component_System
+!theme plain
+
+title Section05 - システム全体コンポーネント図
+
+package "LifeGame Application" {
+
+    package "Presentation Components" #E1FFE8 {
+        component ConsoleGameRenderer
+    }
+
+    package "Application Components" #F0FFE1 {
+        component GameLoopService
+        component GameFactory
+    }
+
+    package "Domain Components" #FFF4E1 {
+        component GameState
+        component Entities
+        component Behaviors
+        component Events
+    }
+
+    package "Infrastructure Components" #FFE1F5 {
+        component ConsoleInputHandler
+        component SystemGameClock
+    }
+
+    package "Core Components" #E1F5FF {
+        component "Value Objects" as VO
+        component GameSettings
+    }
+
+    package "Interfaces" {
+        interface IGameRenderer
+        interface IInputHandler
+        interface IGameClock
+        interface IMovementBehavior
+    }
+}
+
+' Implementations
+ConsoleGameRenderer ..|> IGameRenderer
+ConsoleInputHandler ..|> IInputHandler
+SystemGameClock ..|> IGameClock
+
+' Dependencies
+GameLoopService --> IGameRenderer
+GameLoopService --> IInputHandler
+GameLoopService --> IGameClock
+GameLoopService --> GameState
+
+GameFactory --> GameLoopService
+GameFactory --> GameState
+GameFactory --> Entities
+
+GameState --> Entities
+GameState --> GameSettings
+GameState --> Events
+
+Entities --> Behaviors
+Entities --> VO
+
+Behaviors ..|> IMovementBehavior
+
+GameSettings --> VO
+
+note right of ConsoleGameRenderer
+  Presentation Layer
+  コンソール描画実装
+end note
+
+note right of GameLoopService
+  Application Layer
+  ゲームループ管理
+end note
+
+note right of GameState
+  Domain Layer
+  ビジネスロジック
+end note
+
+note right of ConsoleInputHandler
+  Infrastructure Layer
+  外部システム接続
+end note
+
+note right of VO
+  Core Layer
+  値オブジェクト
+end note
+
+@enduml

@@ -1,0 +1,79 @@
+@startuml Section05_Sequence_GameStartup
+!theme plain
+
+title Section05 - ゲーム起動シーケンス
+
+actor User
+participant "Program.Main" as Main
+participant LifeGame
+participant GameFactory
+participant GameLoopService
+participant GameState
+participant ConsoleGameRenderer as Renderer
+
+User -> Main: プログラム実行
+activate Main
+
+Main -> LifeGame: new LifeGame()
+activate LifeGame
+
+LifeGame -> LifeGame: GameSettings.Default()
+LifeGame -> LifeGame: new ConsoleGameRenderer()
+LifeGame -> LifeGame: new ConsoleInputHandler()
+LifeGame -> LifeGame: new SystemGameClock()
+
+LifeGame -> GameFactory: new GameFactory(renderer, input, clock)
+activate GameFactory
+
+GameFactory -> GameFactory: new Player(initialPos, bounds)
+GameFactory -> GameFactory: new Enemy(initialPos, bounds)
+GameFactory -> GameFactory: new Lizard(initialPos, bounds)
+
+GameFactory -> GameState: new GameState(settings, player, enemy, lizard)
+activate GameState
+GameState --> GameFactory
+deactivate GameState
+
+GameFactory -> GameLoopService: new GameLoopService(state, renderer, input, clock)
+activate GameLoopService
+GameLoopService --> GameFactory
+deactivate GameLoopService
+
+GameFactory --> LifeGame: return GameLoopService
+deactivate GameFactory
+
+LifeGame --> Main
+deactivate LifeGame
+
+Main -> LifeGame: Run()
+activate LifeGame
+
+LifeGame -> GameLoopService: Run()
+activate GameLoopService
+
+GameLoopService -> Renderer: Initialize()
+activate Renderer
+Renderer -> Renderer: Console.Clear()
+Renderer -> Renderer: Console.CursorVisible = false
+Renderer --> GameLoopService
+deactivate Renderer
+
+GameLoopService -> GameState: Start()
+activate GameState
+GameState -> GameState: Phase = Running
+GameState -> GameState: Score = 0
+GameState --> GameLoopService
+deactivate GameState
+
+GameLoopService -> GameLoopService: executeLoop()
+
+note right of GameLoopService
+  ゲームループ開始
+  (詳細は別のシーケンス図参照)
+end note
+
+deactivate GameLoopService
+deactivate LifeGame
+deactivate Main
+
+@enduml

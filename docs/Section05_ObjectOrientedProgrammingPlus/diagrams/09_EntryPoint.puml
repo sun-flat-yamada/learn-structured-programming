@@ -1,0 +1,107 @@
+@startuml Section05_EntryPoint
+!theme plain
+
+title Section05 - Entry Point (Facade Pattern)
+
+class LifeGame {
+  -GameLoopService _gameLoop
+  --
+  +LifeGame()
+  +LifeGame(GameSettings settings)
+  +LifeGame(GameSettings settings, IGameRenderer renderer, IInputHandler inputHandler, IGameClock clock)
+  +void Run()
+}
+
+class GameFactory {
+  -IGameRenderer _renderer
+  -IInputHandler _inputHandler
+  -IGameClock _clock
+  --
+  +GameFactory(IGameRenderer renderer, IInputHandler inputHandler, IGameClock clock)
+  +GameLoopService Create()
+  +GameLoopService Create(GameSettings settings)
+}
+
+class GameLoopService {
+  -GameState _gameState
+  -IGameRenderer _renderer
+  -IInputHandler _inputHandler
+  -IGameClock _clock
+  --
+  +void Run()
+}
+
+class GameSettings {
+  +Bounds BoardBounds
+  +Position InitialPlayerPosition
+  +Position InitialEnemyPosition
+  +Position InitialLizardPosition
+  --
+  +{static} GameSettings Default()
+}
+
+interface IGameRenderer
+interface IInputHandler
+interface IGameClock
+
+class ConsoleGameRenderer
+class ConsoleInputHandler
+class SystemGameClock
+
+' Relationships
+LifeGame --> GameLoopService : uses
+LifeGame --> GameFactory : creates
+LifeGame --> GameSettings : uses
+LifeGame --> IGameRenderer : depends on
+LifeGame --> IInputHandler : depends on
+LifeGame --> IGameClock : depends on
+
+GameFactory --> GameLoopService : creates
+GameFactory --> IGameRenderer : uses
+GameFactory --> IInputHandler : uses
+GameFactory --> IGameClock : uses
+
+IGameRenderer <|.. ConsoleGameRenderer
+IInputHandler <|.. ConsoleInputHandler
+IGameClock <|.. SystemGameClock
+
+note right of LifeGame
+  Facade Pattern
+
+  シンプルなAPI:
+  - new LifeGame()
+  - game.Run()
+
+  複雑なサブシステムを隠蔽
+
+  3つのコンストラクタ:
+  1. デフォルト設定
+  2. カスタム設定
+  3. 完全な依存性注入(テスト用)
+end note
+
+note bottom of LifeGame
+  使用例:
+
+  // 最もシンプル
+  var game = new LifeGame();
+  game.Run();
+
+  // カスタム設定
+  var settings = GameSettings
+    .CreateBuilder()
+    .WithBoardSize(40, 40)
+    .Build();
+  var game = new LifeGame(settings);
+  game.Run();
+
+  // テスト用(モック注入)
+  var game = new LifeGame(
+    settings,
+    mockRenderer,
+    mockInput,
+    mockClock);
+  game.Run();
+end note
+
+@enduml

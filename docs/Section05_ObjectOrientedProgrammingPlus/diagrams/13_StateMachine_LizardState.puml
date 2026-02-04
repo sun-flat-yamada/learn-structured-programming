@@ -1,0 +1,51 @@
+@startuml Section05_StateMachine_LizardState
+!theme plain
+
+title Section05 - トカゲの状態遷移図（State Pattern）
+
+[*] --> Wandering : ゲーム開始
+
+Wandering --> Fleeing : ワニが接近\n(distance <= fleeDistance)
+Wandering --> TailDropped : ワニが超接近\n(distance <= tailDropDistance)
+
+Fleeing --> Wandering : ワニが離れる\n(distance > fleeDistance)
+Fleeing --> TailDropped : ワニが超接近\n(distance <= tailDropDistance)
+
+TailDropped --> TailDropped : 倍速逃走継続\n(_speedBoostTicks > 0)
+
+note right of Wandering
+  🚶 うろうろ歩く
+  - ランダム移動
+  - HasTail = true
+  - 通常速度
+
+  行動:
+  wander()
+end note
+
+note right of Fleeing
+  🏃 逃走中
+  - ワニから逃げる
+  - HasTail = true
+  - 通常速度
+
+  行動:
+  flee(enemyPosition)
+end note
+
+note right of TailDropped
+  ⚡ 倍速逃走
+  - 尻尾を切り離し済み
+  - HasTail = false
+  - 倍速移動（10ティック）
+  - その後通常速度で逃走継続
+
+  行動:
+  fleeWithSpeedBoost(enemyPosition)
+
+  尻尾:
+  DroppedTail != null
+  ワニの囮として機能
+end note
+
+@enduml

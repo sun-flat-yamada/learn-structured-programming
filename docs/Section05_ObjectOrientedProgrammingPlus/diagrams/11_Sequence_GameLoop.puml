@@ -1,0 +1,115 @@
+@startuml Section05_Sequence_GameLoop
+!theme plain
+
+title Section05 - ゲームループシーケンス
+
+participant GameLoopService as Loop
+participant ConsoleGameRenderer as Renderer
+participant ConsoleInputHandler as Input
+participant GameState as State
+participant Player
+participant Enemy
+participant Lizard
+participant SystemGameClock as Clock
+
+loop ゲームがアクティブな間 [IsActive == true]
+
+    Loop -> Renderer: Render(context)
+    activate Renderer
+    Renderer -> Renderer: renderGameBoard()
+    Renderer -> Renderer: renderStatus()
+    Renderer --> Loop
+    deactivate Renderer
+
+    Loop -> Input: ProcessInput(player)
+    activate Input
+    Input -> Input: Console.ReadKey()
+
+    alt キー入力あり
+        Input -> Player: MoveUp/Down/Left/Right()
+        activate Player
+        Player -> Player: TryMove(direction)
+        Player --> Input: true
+        deactivate Player
+        Input --> Loop: InputResult.Moved
+    else キー入力なし
+        Input --> Loop: InputResult.Continue
+        Loop -> Player: PerformDefaultMove()
+        activate Player
+        Player --> Loop
+        deactivate Player
+    end
+    deactivate Input
+
+    Loop -> Lizard: Act(enemyPosition)
+    activate Lizard
+    Lizard -> Lizard: updateState(distance)
+
+    alt 安全 [distance > fleeDistance]
+        Lizard -> Lizard: wander()
+    else 危険 [distance <= fleeDistance]
+        Lizard -> Lizard: flee(enemyPosition)
+    else 緊急 [distance <= tailDropDistance]
+        Lizard -> Lizard: dropTail()
+        Lizard -> Lizard: fleeWithSpeedBoost()
+    end
+
+    Lizard --> Loop
+    deactivate Lizard
+
+    Loop -> Loop: determineEnemyTarget()
+    activate Loop
+
+    alt 尻尾がアクティブ
+        Loop --> Loop: tail.Position
+    else 最も近いターゲット
+        Loop --> Loop: closestTarget.Position
+    end
+    deactivate Loop
+
+    Loop -> Enemy: MoveTowards(target)
+    activate Enemy
+    Enemy -> Enemy: TryMove(direction)
+    Enemy --> Loop
+    deactivate Enemy
+
+    Loop -> State: Tick()
+    activate State
+    State -> State: TickCount++
+    State -> State: Score++
+    State --> Loop
+    deactivate State
+
+    Loop -> State: CheckCollisions()
+    activate State
+    State -> State: Player.CollidesWith(Enemy)?
+    State -> State: Lizard.CollidesWith(Enemy)?
+    State -> State: Tail.CollidesWith(Enemy)?
+
+    alt 衝突発生
+        State -> State: endGame(reason)
+        State -> State: Phase = Ended
+    end
+
+    State --> Loop
+    deactivate State
+
+    Loop -> Clock: Wait(updateIntervalMs)
+    activate Clock
+    Clock -> Clock: Thread.Sleep(200)
+    Clock --> Loop
+    deactivate Clock
+
+end
+
+Loop -> Renderer: RenderGameOver(args)
+activate Renderer
+Renderer --> Loop
+deactivate Renderer
+
+Loop -> Renderer: Cleanup()
+activate Renderer
+Renderer --> Loop
+deactivate Renderer
+
+@enduml

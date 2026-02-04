@@ -1,0 +1,90 @@
+@startuml Section05_Pattern_Strategy
+!theme plain
+
+title Design Pattern: Strategy Pattern (戦略パターン)
+
+' Strategy Interface
+interface IMovementBehavior <<Strategy>> {
+  +Direction DetermineDirection(Position current, Position target)
+}
+
+' Concrete Strategies
+class ChaseMovementBehavior <<ConcreteStrategy>> {
+  +Direction DetermineDirection(Position current, Position target)
+}
+
+class FleeMovementBehavior <<ConcreteStrategy>> {
+  +Direction DetermineDirection(Position current, Position target)
+}
+
+class RandomMovementBehavior <<ConcreteStrategy>> {
+  -Random _random
+  +Direction DetermineDirection(Position current, Position target)
+}
+
+' Context
+abstract class Entity <<Context>> {
+  +bool TryMove(Direction direction)
+}
+
+class Enemy <<Context>> {
+  -IMovementBehavior _movementBehavior
+  +void MoveTowards(Position target)
+}
+
+class Lizard <<Context>> {
+  -IMovementBehavior _randomMovement
+  -IMovementBehavior _fleeMovement
+  +void Act(Position enemyPosition)
+}
+
+' Relationships
+IMovementBehavior <|.. ChaseMovementBehavior
+IMovementBehavior <|.. FleeMovementBehavior
+IMovementBehavior <|.. RandomMovementBehavior
+
+Entity <|-- Enemy
+Entity <|-- Lizard
+
+Enemy o--> IMovementBehavior : strategy
+Lizard o--> IMovementBehavior : strategies (2)
+
+note top of IMovementBehavior
+  Strategy Pattern
+
+  目的:
+  アルゴリズムをカプセル化し、
+  実行時に切り替え可能にする
+
+  メリット:
+  - Open/Closed原則に準拠
+  - 新しい戦略の追加が容易
+  - テスト時にモック戦略を注入可能
+end note
+
+note right of ChaseMovementBehavior
+  追跡戦略
+  ターゲットに向かって移動
+end note
+
+note right of FleeMovementBehavior
+  逃走戦略
+  ターゲットから逃げる
+end note
+
+note right of RandomMovementBehavior
+  ランダム戦略
+  4方向のいずれかに移動
+end note
+
+note bottom of Enemy
+  Context
+
+  var enemy = new Enemy(
+    pos, bounds,
+    new ChaseMovementBehavior());
+
+  enemy.MoveTowards(target);
+end note
+
+@enduml

@@ -1,0 +1,97 @@
+@startuml Section05_Pattern_Factory
+!theme plain
+
+title Design Pattern: Factory Pattern (ファクトリパターン)
+
+' Factory
+class GameFactory <<Factory>> {
+  -IGameRenderer _renderer
+  -IInputHandler _inputHandler
+  -IGameClock _clock
+  --
+  +GameFactory(IGameRenderer renderer, IInputHandler inputHandler, IGameClock clock)
+  +GameLoopService Create()
+  +GameLoopService Create(GameSettings settings)
+}
+
+' Products
+class GameLoopService <<Product>> {
+  -GameState _gameState
+  -IGameRenderer _renderer
+  -IInputHandler _inputHandler
+  -IGameClock _clock
+  --
+  +void Run()
+}
+
+class GameState <<Product>> {
+  +Player Player
+  +Enemy Enemy
+  +Lizard Lizard
+  +GameSettings Settings
+  --
+  +void Start()
+  +void Tick()
+}
+
+class Player <<Product>>
+class Enemy <<Product>>
+class Lizard <<Product>>
+
+' Dependencies
+interface IGameRenderer
+interface IInputHandler
+interface IGameClock
+class GameSettings
+
+' Relationships
+GameFactory ..> GameLoopService : creates
+GameFactory ..> GameState : creates
+GameFactory ..> Player : creates
+GameFactory ..> Enemy : creates
+GameFactory ..> Lizard : creates
+
+GameFactory --> IGameRenderer : uses
+GameFactory --> IInputHandler : uses
+GameFactory --> IGameClock : uses
+GameFactory --> GameSettings : uses
+
+GameLoopService --> GameState : manages
+GameLoopService --> IGameRenderer : uses
+GameLoopService --> IInputHandler : uses
+GameLoopService --> IGameClock : uses
+
+GameState --> Player : has
+GameState --> Enemy : has
+GameState --> Lizard : has
+GameState --> GameSettings : has
+
+note top of GameFactory
+  Factory Pattern
+
+  目的:
+  オブジェクト生成の複雑さを隠蔽
+
+  メリット:
+  - オブジェクト生成ロジックの集約
+  - 依存関係の管理が容易
+  - テスト時の設定変更が簡単
+end note
+
+note right of GameFactory
+  使用例:
+
+  var factory = new GameFactory(
+    renderer,
+    inputHandler,
+    clock);
+
+  var gameLoop = factory.Create(settings);
+
+  内部で複雑なオブジェクトグラフを構築:
+  - Player, Enemy, Lizardの生成
+  - GameStateの生成
+  - GameLoopServiceの生成
+end note
+
+@enduml

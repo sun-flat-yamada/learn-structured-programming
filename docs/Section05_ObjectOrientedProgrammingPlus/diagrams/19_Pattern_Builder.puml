@@ -1,0 +1,87 @@
+@startuml Section05_Pattern_Builder
+!theme plain
+
+title Design Pattern: Builder Pattern (ビルダーパターン)
+
+' Product
+class GameSettings <<Product>> {
+  +Bounds BoardBounds
+  +Position InitialPlayerPosition
+  +Position InitialEnemyPosition
+  +Position InitialLizardPosition
+  +int UpdateIntervalMs
+  +double EnemyMoveProbability
+  +int LizardFleeDistance
+  +int LizardTailDropDistance
+  --
+  +{static} GameSettings Default()
+  +{static} Builder CreateBuilder()
+}
+
+' Builder
+class "GameSettings.Builder" as Builder <<Builder>> {
+  -int _boardWidth = 32
+  -int _boardHeight = 32
+  -Position? _playerPosition
+  -Position? _enemyPosition
+  -Position? _lizardPosition
+  -int _updateIntervalMs = 200
+  -double _enemyMoveProbability = 1.0
+  -int _lizardFleeDistance = 8
+  -int _lizardTailDropDistance = 4
+  --
+  +Builder WithBoardSize(int width, int height)
+  +Builder WithPlayerPosition(Position position)
+  +Builder WithEnemyPosition(Position position)
+  +Builder WithLizardPosition(Position position)
+  +Builder WithUpdateInterval(int milliseconds)
+  +Builder WithEnemyMoveProbability(double probability)
+  +Builder WithLizardFleeDistance(int distance)
+  +Builder WithLizardTailDropDistance(int distance)
+  +GameSettings Build()
+}
+
+' Relationships
+GameSettings +-- Builder : creates
+Builder ..> GameSettings : builds
+
+note top of Builder
+  Builder Pattern
+
+  目的:
+  複雑なオブジェクトの構築を
+  ステップバイステップで行う
+
+  メリット:
+  - 流暢なインターフェース (Fluent Interface)
+  - 複雑な設定の段階的構築
+  - デフォルト値の提供
+  - 読みやすいコード
+end note
+
+note right of Builder
+  使用例:
+
+  var settings = GameSettings
+    .CreateBuilder()
+    .WithBoardSize(40, 40)
+    .WithUpdateInterval(100)
+    .WithLizardFleeDistance(10)
+    .Build();
+
+  メソッドチェーンで
+  流暢に設定を構築
+end note
+
+note bottom of GameSettings
+  Product
+
+  不変オブジェクト:
+  - 作成後の変更不可
+  - すべてのプロパティがreadonly
+
+  デフォルト設定:
+  var settings = GameSettings.Default();
+end note
+
+@enduml

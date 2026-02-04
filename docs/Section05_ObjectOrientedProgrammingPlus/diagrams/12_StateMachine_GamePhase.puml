@@ -1,0 +1,43 @@
+@startuml Section05_StateMachine_GamePhase
+!theme plain
+
+title Section05 - ゲームフェーズ状態遷移図
+
+[*] --> NotStarted : ゲーム作成
+
+NotStarted --> Running : Start()
+
+Running --> Paused : Pause()
+Paused --> Running : Resume()
+
+Running --> Ended : ゲームオーバー
+Running --> Ended : QuitByPlayer()
+
+Ended --> [*] : プログラム終了
+
+note right of NotStarted
+  初期状態
+  Score = 0
+  TickCount = 0
+end note
+
+note right of Running
+  ゲーム実行中
+  - 入力受付
+  - エンティティ移動
+  - 衝突判定
+  - スコア加算
+end note
+
+note right of Paused
+  一時停止
+  (未実装)
+end note
+
+note right of Ended
+  終了状態
+  - 最終スコア表示
+  - 統計情報表示
+end note
+
+@enduml
