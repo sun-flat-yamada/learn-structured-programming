@@ -1,0 +1,104 @@
+@startuml Section05_CoreLayer
+!theme plain
+
+title Section05 - Core Layer 詳細クラス図
+
+class Position <<struct>> {
+  +int X
+  +int Y
+  --
+  +Position(int x, int y)
+  +Position Move(int deltaX, int deltaY)
+  +Position MoveUp()
+  +Position MoveDown()
+  +Position MoveLeft()
+  +Position MoveRight()
+  +Position MoveTowards(Position target)
+  +Position MoveAwayFrom(Position target)
+  +int DistanceTo(Position other)
+  +bool Equals(Position other)
+  +int GetHashCode()
+}
+
+enum Direction {
+  None
+  Up
+  Down
+  Left
+  Right
+}
+
+class Bounds <<struct>> {
+  +int Width
+  +int Height
+  +Position Center
+  --
+  +Bounds(int width, int height)
+  +bool Contains(Position position)
+  +Position Clamp(Position position)
+  +bool Equals(Bounds other)
+  +int GetHashCode()
+}
+
+class GameSettings {
+  +Bounds BoardBounds
+  +Position InitialPlayerPosition
+  +Position InitialEnemyPosition
+  +Position InitialLizardPosition
+  +int UpdateIntervalMs
+  +double EnemyMoveProbability
+  +int LizardFleeDistance
+  +int LizardTailDropDistance
+  --
+  +{static} GameSettings Default()
+  +{static} Builder CreateBuilder()
+}
+
+class "GameSettings.Builder" as Builder {
+  -int _boardWidth
+  -int _boardHeight
+  -Position? _playerPosition
+  -Position? _enemyPosition
+  -Position? _lizardPosition
+  -int _updateIntervalMs
+  -double _enemyMoveProbability
+  -int _lizardFleeDistance
+  -int _lizardTailDropDistance
+  --
+  +Builder WithBoardSize(int width, int height)
+  +Builder WithPlayerPosition(Position position)
+  +Builder WithEnemyPosition(Position position)
+  +Builder WithLizardPosition(Position position)
+  +Builder WithUpdateInterval(int milliseconds)
+  +Builder WithEnemyMoveProbability(double probability)
+  +Builder WithLizardFleeDistance(int distance)
+  +Builder WithLizardTailDropDistance(int distance)
+  +GameSettings Build()
+}
+
+GameSettings +-- Builder : creates
+GameSettings --> Position
+GameSettings --> Bounds
+
+interface "IEquatable<Position>" as IEquatablePosition
+interface "IEquatable<Bounds>" as IEquatableBounds
+
+Position ..|> IEquatablePosition
+Bounds ..|> IEquatableBounds
+
+note right of Position
+  不変な値オブジェクト
+  Value Object Pattern
+end note
+
+note right of Bounds
+  不変な値オブジェクト
+  Value Object Pattern
+end note
+
+note right of Builder
+  Builder Pattern
+  流暢なインターフェース
+end note
+
+@enduml

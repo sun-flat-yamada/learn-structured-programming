@@ -1,0 +1,124 @@
+@startuml Section05_SOLID_DependencyInversion
+!theme plain
+
+title SOLID: Dependency Inversion Principle (依存性逆転の原則)
+
+package "High-Level Modules" #E1F5FF {
+    class GameLoopService <<High-Level>> {
+      -IGameRenderer _renderer
+      -IInputHandler _inputHandler
+      -IGameClock _clock
+      --
+      +GameLoopService(
+        GameState gameState,
+        IGameRenderer renderer,
+        IInputHandler inputHandler,
+        IGameClock clock)
+      +void Run()
+    }
+
+    class GameFactory <<High-Level>> {
+      -IGameRenderer _renderer
+      -IInputHandler _inputHandler
+      -IGameClock _clock
+      --
+      +GameLoopService Create(GameSettings settings)
+    }
+}
+
+package "Abstractions" #FFF4E1 {
+    interface IGameRenderer <<Interface>> {
+      +void Initialize()
+      +void Render(RenderContext context)
+      +void Cleanup()
+    }
+
+    interface IInputHandler <<Interface>> {
+      +InputResult ProcessInput(Player player)
+    }
+
+    interface IGameClock <<Interface>> {
+      +void Wait(int milliseconds)
+    }
+}
+
+package "Low-Level Modules" #FFE1F5 {
+    class ConsoleGameRenderer <<Low-Level>> {
+      +void Initialize()
+      +void Render(RenderContext context)
+      +void Cleanup()
+    }
+
+    class ConsoleInputHandler <<Low-Level>> {
+      +InputResult ProcessInput(Player player)
+    }
+
+    class SystemGameClock <<Low-Level>> {
+      +void Wait(int milliseconds)
+    }
+}
+
+' Dependencies
+GameLoopService --> IGameRenderer : depends on abstraction
+GameLoopService --> IInputHandler : depends on abstraction
+GameLoopService --> IGameClock : depends on abstraction
+
+GameFactory --> IGameRenderer : depends on abstraction
+GameFactory --> IInputHandler : depends on abstraction
+GameFactory --> IGameClock : depends on abstraction
+
+ConsoleGameRenderer ..|> IGameRenderer : implements
+ConsoleInputHandler ..|> IInputHandler : implements
+SystemGameClock ..|> IGameClock : implements
+
+note top of GameLoopService
+  Dependency Inversion Principle
+
+  高レベルモジュールは低レベルモジュールに
+  依存すべきではない。
+  両方とも抽象に依存すべきである。
+
+  メリット:
+  - テスタビリティの向上
+  - 実装の切り替えが容易
+  - モジュール間の疎結合
+  - 並行開発が可能
+end note
+
+note right of IGameRenderer
+  抽象 (Interface)
+
+  高レベルモジュールと
+  低レベルモジュールの
+  両方がこれに依存
+
+  依存関係が逆転している
+end note
+
+note bottom of ConsoleGameRenderer
+  低レベルモジュール
+
+  具象クラスは抽象に依存
+
+  実装の詳細:
+  - Console.WriteLine()
+  - Console.SetCursorPosition()
+  - etc.
+end note
+
+note left of GameLoopService
+  高レベルモジュール
+
+  具象クラスではなく
+  抽象 (Interface) に依存
+
+  テスト時にモックを注入可能:
+  var mockRenderer = new MockRenderer();
+  var gameLoop = new GameLoopService(
+    state,
+    mockRenderer,  // モック注入
+    mockInput,
+    mockClock);
+end note
+
+@enduml

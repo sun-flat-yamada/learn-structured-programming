@@ -1,0 +1,111 @@
+@startuml Section05_Pattern_ValueObject
+!theme plain
+
+title Design Pattern: Value Object Pattern (値オブジェクトパターン)
+
+' Value Objects
+class Position <<ValueObject>> <<struct>> {
+  +int X
+  +int Y
+  --
+  +Position(int x, int y)
+  +Position Move(int deltaX, int deltaY)
+  +Position MoveTowards(Position target)
+  +Position MoveAwayFrom(Position target)
+  +int DistanceTo(Position other)
+  +bool Equals(Position other)
+  +int GetHashCode()
+  +{static} bool operator ==(Position left, Position right)
+  +{static} bool operator !=(Position left, Position right)
+}
+
+class Bounds <<ValueObject>> <<struct>> {
+  +int Width
+  +int Height
+  +Position Center
+  --
+  +Bounds(int width, int height)
+  +bool Contains(Position position)
+  +Position Clamp(Position position)
+  +bool Equals(Bounds other)
+  +int GetHashCode()
+  +{static} bool operator ==(Bounds left, Bounds right)
+  +{static} bool operator !=(Bounds left, Bounds right)
+}
+
+class RenderContext <<ValueObject>> <<struct>> {
+  +Player Player
+  +Enemy Enemy
+  +Lizard Lizard
+  +int Score
+  +int TickCount
+  +int BoardWidth
+  +int BoardHeight
+  +int TailsEaten
+  +bool IsPlayerAlive
+  +bool IsLizardAlive
+}
+
+' Interface
+interface "IEquatable<T>" as IEquatable {
+  +bool Equals(T other)
+}
+
+' Relationships
+Position ..|> IEquatable : <Position>
+Bounds ..|> IEquatable : <Bounds>
+
+note top of Position
+  Value Object Pattern
+
+  特徴:
+  - 不変 (Immutable)
+  - 値による等価性比較
+  - struct (スタック割り当て)
+
+  メリット:
+  - スレッドセーフ
+  - メモリ効率的
+  - 予測可能な動作
+end note
+
+note right of Position
+  不変性の実装:
+
+  // 新しいインスタンスを返す
+  public Position Move(int deltaX, int deltaY)
+    => new(X + deltaX, Y + deltaY);
+
+  // 元のインスタンスは変更されない
+  var pos1 = new Position(10, 20);
+  var pos2 = pos1.Move(1, 1);
+  // pos1 は (10, 20) のまま
+  // pos2 は (11, 21)
+end note
+
+note bottom of Bounds
+  等価性比較:
+
+  public bool Equals(Bounds other)
+    => Width == other.Width
+    && Height == other.Height;
+
+  public override int GetHashCode()
+    => HashCode.Combine(Width, Height);
+
+  // 演算子オーバーロード
+  public static bool operator ==(
+    Bounds left, Bounds right)
+    => left.Equals(right);
+end note
+
+note right of RenderContext
+  データ転送オブジェクト (DTO)
+
+  描画に必要な情報をまとめた
+  不変な値オブジェクト
+
+  レイヤー間のデータ転送に使用
+end note
+
+@enduml

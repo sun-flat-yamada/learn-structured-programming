@@ -1,0 +1,128 @@
+@startuml Section05_ApplicationLayer
+!theme plain
+
+title Section05 - Application Layer
+
+' Interfaces
+interface IGameRenderer {
+  +void Initialize()
+  +void Render(RenderContext context)
+  +void RenderGameOver(GameOverEventArgs gameOverArgs)
+  +void Cleanup()
+}
+
+interface IInputHandler {
+  +InputResult ProcessInput(Player player)
+}
+
+interface IGameClock {
+  +void Wait(int milliseconds)
+}
+
+' DTOs
+class RenderContext <<struct>> {
+  +Player Player
+  +Enemy Enemy
+  +Lizard Lizard
+  +int Score
+  +int TickCount
+  +int BoardWidth
+  +int BoardHeight
+  +int TailsEaten
+  +bool IsPlayerAlive
+  +bool IsLizardAlive
+}
+
+enum InputResult {
+  Continue
+  Moved
+  Quit
+  Pause
+}
+
+' Services
+class GameLoopService {
+  -GameState _gameState
+  -IGameRenderer _renderer
+  -IInputHandler _inputHandler
+  -IGameClock _clock
+  -bool _hadTailLastTick
+  -GameOverEventArgs? _gameOverArgs
+  +event EventHandler LoopStarted
+  +event EventHandler TickCompleted
+  --
+  +GameLoopService(GameState gameState, IGameRenderer renderer, IInputHandler inputHandler, IGameClock clock)
+  +void Run()
+  -void initialize()
+  -void executeLoop()
+  -void cleanup()
+  -void renderCurrentState()
+  -void processInput()
+  -void updateGameWorld()
+  -void checkGameConditions()
+  -void waitForNextTick()
+  -Position determineEnemyTarget()
+}
+
+class GameFactory {
+  -IGameRenderer _renderer
+  -IInputHandler _inputHandler
+  -IGameClock _clock
+  --
+  +GameFactory(IGameRenderer renderer, IInputHandler inputHandler, IGameClock clock)
+  +GameLoopService Create()
+  +GameLoopService Create(GameSettings settings)
+}
+
+' Relationships
+IGameRenderer --> RenderContext : uses
+IGameRenderer --> GameOverEventArgs : uses
+IInputHandler --> Player : uses
+IInputHandler --> InputResult : returns
+
+GameLoopService --> GameState : manages
+GameLoopService --> IGameRenderer : uses
+GameLoopService --> IInputHandler : uses
+GameLoopService --> IGameClock : uses
+
+GameFactory --> GameLoopService : creates
+GameFactory --> GameState : creates
+GameFactory --> Player : creates
+GameFactory --> Enemy : creates
+GameFactory --> Lizard : creates
+GameFactory --> IGameRenderer : uses
+GameFactory --> IInputHandler : uses
+GameFactory --> IGameClock : uses
+GameFactory --> GameSettings : uses
+
+note right of GameLoopService
+  Facade Pattern
+  ゲームループの複雑さを隠蔽
+
+  Run()メソッドで
+  ゲーム全体を実行
+end note
+
+note right of GameFactory
+  Factory Pattern
+  オブジェクト生成の複雑さを隠蔽
+
+  依存性注入を管理
+end note
+
+note top of IGameRenderer
+  Interface Segregation Principle
+  描画機能のみを定義
+end note
+
+note top of IInputHandler
+  Interface Segregation Principle
+  入力処理のみを定義
+end note
+
+note top of IGameClock
+  Interface Segregation Principle
+  時間管理のみを定義
+end note
+
+@enduml

@@ -1,0 +1,121 @@
+@startuml Section05_DomainEntities
+!theme plain
+
+title Section05 - Domain Layer: Entities
+
+abstract class Entity {
+  #Bounds _bounds
+  +Position Position
+  +{abstract} string DisplayName
+  +{abstract} string Emoji
+  +{abstract} ConsoleColor Color
+  +{abstract} bool IsActive
+  --
+  #Entity(Position initialPosition, Bounds bounds)
+  +bool TryMove(Direction direction)
+  #bool TryMoveTo(Position newPosition)
+  +bool CollidesWith(Entity other)
+  +int DistanceTo(Entity other)
+  #Bounds GetBounds()
+}
+
+class Player {
+  -IMovementBehavior _defaultMovement
+  +string DisplayName = "カメ"
+  +string Emoji = "🐢"
+  +ConsoleColor Color = Green
+  --
+  +Player(Position initialPosition, Bounds bounds, IMovementBehavior? defaultMovement)
+  +bool MoveUp()
+  +bool MoveDown()
+  +bool MoveLeft()
+  +bool MoveRight()
+  +void PerformDefaultMove()
+}
+
+class Enemy {
+  -IMovementBehavior _movementBehavior
+  +string DisplayName = "ワニ"
+  +string Emoji = "🐊"
+  +ConsoleColor Color = Red
+  --
+  +Enemy(Position initialPosition, Bounds bounds, IMovementBehavior? movementBehavior)
+  +void MoveTowards(Position target)
+}
+
+class Lizard {
+  -IMovementBehavior _randomMovement
+  -IMovementBehavior _fleeMovement
+  -int _fleeDistance
+  -int _tailDropDistance
+  -int _speedBoostTicks
+  +string DisplayName = "トカゲ"
+  +string Emoji = "🦎"
+  +ConsoleColor Color = Yellow
+  +bool HasTail
+  +LizardState State
+  +Tail? DroppedTail
+  +bool IsSpeedBoosted
+  --
+  +Lizard(Position initialPosition, Bounds bounds, int fleeDistance, int tailDropDistance, IMovementBehavior? randomMovement, IMovementBehavior? fleeMovement)
+  +void Act(Position enemyPosition)
+  +void NotifyTailEaten()
+  -void updateState(int distance)
+  -void wander()
+  -void flee(Position enemy)
+  -void fleeWithSpeedBoost(Position enemy)
+  -void dropTail()
+}
+
+class Tail {
+  -bool _isActive
+  +string DisplayName = "尻尾"
+  +string Emoji = "尾 "
+  +ConsoleColor Color = DarkYellow
+  +bool IsActive
+  --
+  +Tail(Position position, Bounds bounds)
+  +void OnEaten()
+}
+
+enum LizardState {
+  Wandering
+  Fleeing
+  TailDropped
+}
+
+Entity <|-- Player
+Entity <|-- Enemy
+Entity <|-- Lizard
+Entity <|-- Tail
+
+Entity --> Position
+Entity --> Bounds
+
+Lizard --> LizardState
+Lizard --> Tail : creates
+
+note right of Player
+  プレイヤーキャラクター
+  ユーザー操作可能
+end note
+
+note right of Enemy
+  敵キャラクター
+  ターゲットを追跡
+end note
+
+note right of Lizard
+  トカゲキャラクター
+  State Pattern適用
+  - Wandering: うろうろ
+  - Fleeing: 逃走
+  - TailDropped: 倍速逃走
+end note
+
+note right of Tail
+  トカゲの尻尾
+  ワニの囮として機能
+end note
+
+@enduml

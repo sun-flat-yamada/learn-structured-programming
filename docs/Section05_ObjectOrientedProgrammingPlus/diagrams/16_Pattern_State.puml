@@ -1,0 +1,76 @@
+@startuml Section05_Pattern_State
+!theme plain
+
+title Design Pattern: State Pattern (ステートパターン)
+
+' Context
+class Lizard <<Context>> {
+  -IMovementBehavior _randomMovement
+  -IMovementBehavior _fleeMovement
+  -int _speedBoostTicks
+  +LizardState State
+  +bool HasTail
+  +Tail? DroppedTail
+  +bool IsSpeedBoosted
+  --
+  +void Act(Position enemyPosition)
+  -void updateState(int distance)
+  -void wander()
+  -void flee(Position enemy)
+  -void fleeWithSpeedBoost(Position enemy)
+  -void dropTail()
+}
+
+' State
+enum LizardState <<State>> {
+  Wandering
+  Fleeing
+  TailDropped
+}
+
+' Relationships
+Lizard --> LizardState : state
+
+note top of LizardState
+  State Pattern
+
+  目的:
+  オブジェクトの状態に応じて
+  振る舞いを変更する
+
+  メリット:
+  - 状態ごとの振る舞いが明確
+  - 新しい状態の追加が容易
+  - 状態遷移ロジックの集約
+end note
+
+note right of Lizard
+  Context
+
+  状態に応じた行動:
+
+  Wandering:
+    wander() - ランダム移動
+
+  Fleeing:
+    flee() - ワニから逃げる
+
+  TailDropped:
+    fleeWithSpeedBoost() - 倍速逃走
+
+  状態遷移:
+  updateState(distance)
+end note
+
+note bottom of Lizard
+  使用例:
+
+  lizard.Act(enemyPosition);
+
+  内部で状態に応じた行動を実行:
+  - 距離を計算
+  - 状態を更新
+  - 状態に応じた行動を実行
+end note
+
+@enduml

@@ -1,0 +1,122 @@
+@startuml Section05_Pattern_Facade
+!theme plain
+
+title Design Pattern: Facade Pattern (ファサードパターン)
+
+' Facade
+class LifeGame <<Facade>> {
+  -GameLoopService _gameLoop
+  --
+  +LifeGame()
+  +LifeGame(GameSettings settings)
+  +LifeGame(GameSettings settings, IGameRenderer renderer, IInputHandler inputHandler, IGameClock clock)
+  +void Run()
+}
+
+' Subsystems
+package "Complex Subsystems" {
+    class GameLoopService {
+      -GameState _gameState
+      -IGameRenderer _renderer
+      -IInputHandler _inputHandler
+      -IGameClock _clock
+      --
+      +void Run()
+      -void initialize()
+      -void executeLoop()
+      -void cleanup()
+      -void renderCurrentState()
+      -void processInput()
+      -void updateGameWorld()
+      -void checkGameConditions()
+    }
+
+    class GameFactory {
+      +GameLoopService Create(GameSettings settings)
+    }
+
+    class GameState {
+      +void Start()
+      +void Tick()
+      +bool CheckCollisions()
+    }
+
+    class ConsoleGameRenderer {
+      +void Initialize()
+      +void Render(RenderContext context)
+    }
+
+    class ConsoleInputHandler {
+      +InputResult ProcessInput(Player player)
+    }
+
+    class SystemGameClock {
+      +void Wait(int milliseconds)
+    }
+}
+
+' Relationships
+LifeGame --> GameLoopService : uses
+LifeGame --> GameFactory : creates
+GameLoopService --> GameState : manages
+GameLoopService --> ConsoleGameRenderer : uses
+GameLoopService --> ConsoleInputHandler : uses
+GameLoopService --> SystemGameClock : uses
+
+note top of LifeGame
+  Facade Pattern
+
+  目的:
+  複雑なサブシステムへの
+  統一されたシンプルなインターフェースを提供
+
+  メリット:
+  - 複雑さの隠蔽
+  - シンプルで使いやすいAPI
+  - クライアントコードの簡潔化
+  - サブシステムの変更の影響を最小化
+end note
+
+note right of LifeGame
+  シンプルなAPI:
+
+  // 最もシンプルな使用方法
+  var game = new LifeGame();
+  game.Run();
+
+  // たった2行でゲームが起動
+  // 内部の複雑さは完全に隠蔽
+end note
+
+note bottom of LifeGame
+  3つのコンストラクタ:
+
+  1. デフォルト設定
+     new LifeGame()
+
+  2. カスタム設定
+     new LifeGame(settings)
+
+  3. 完全な依存性注入 (テスト用)
+     new LifeGame(
+       settings,
+       mockRenderer,
+       mockInput,
+       mockClock)
+end note
+
+note left of GameLoopService
+  複雑なサブシステム
+
+  内部で多くの処理を実行:
+  - 初期化
+  - ゲームループ
+  - 入力処理
+  - 描画
+  - 衝突判定
+  - クリーンアップ
+
+  Facadeがこれらを隠蔽
+end note
+
+@enduml
